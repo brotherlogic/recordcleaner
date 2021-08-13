@@ -50,6 +50,15 @@ func main() {
 		if err != nil {
 			log.Fatalf("Error on Get Clean: %v", err)
 		}
-		fmt.Printf("%v and %v", res, err)
+		conn2, err2 := utils.LFDialServer(ctx, "recordcollection")
+		if err2 != nil {
+			log.Fatalf("Cannot find rc: %v", err2)
+		}
+		rcclient := pbrc.NewRecordCollectionServiceClient(conn2)
+		rec, err := rcclient.GetRecord(ctx, &pbrc.GetRecordRequest{InstanceId: res.GetInstanceId()})
+		if err != nil {
+			log.Fatalf("Cannot get record: %v", err)
+		}
+		fmt.Printf("%v\n", rec.GetRecord().GetRelease().GetTitle())
 	}
 }

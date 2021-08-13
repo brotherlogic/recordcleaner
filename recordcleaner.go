@@ -125,6 +125,7 @@ func (s *Server) getRecord(ctx context.Context, iid int32) (*rcpb.Record, error)
 // DoRegister does RPC registration
 func (s *Server) DoRegister(server *grpc.Server) {
 	rcpb.RegisterClientUpdateServiceServer(server, s)
+	pb.RegisterRecordCleanerServiceServer(server, s)
 }
 
 // ReportHealth alerts if we're not healthy

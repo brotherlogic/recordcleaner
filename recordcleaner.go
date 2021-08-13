@@ -11,9 +11,17 @@ import (
 	"github.com/prometheus/client_golang/prometheus/promauto"
 	"golang.org/x/net/context"
 	"google.golang.org/grpc"
+	"google.golang.org/protobuf/proto"
 
+	dspb "github.com/brotherlogic/dstore/proto"
 	pbg "github.com/brotherlogic/goserver/proto"
+	pb "github.com/brotherlogic/recordcleaner/proto"
 	rcpb "github.com/brotherlogic/recordcollection/proto"
+	google_protobuf "github.com/golang/protobuf/ptypes/any"
+)
+
+const (
+	CONFIG_KEY = "github.com/brotherlogic/recordcleaner/config"
 )
 
 var (
@@ -32,9 +40,59 @@ type Server struct {
 	*goserver.GoServer
 }
 
+func (s *Server) loadConfig(ctx context.Context) (*pb.Config, error) {
+	conn, err := s.FDialServer(ctx, "dstore")
+	if err != nil {
+		return nil, err
+	}
+	defer conn.Close()
+
+	client := dspb.NewDStoreServiceClient(conn)
+	res, err := client.Read(ctx, &dspb.ReadRequest{Key: CONFIG_KEY})
+	if err != nil {
+		return nil, err
+	}
+
+	if res.GetConsensus() < 0.5 {
+		return nil, fmt.Errorf("could not get read consensus (%v)", res.GetConsensus())
+	}
+
+	config := &pb.Config{}
+	err = proto.Unmarshal(res.GetValue().GetValue(), config)
+	if err != nil {
+		return nil, err
+	}
+
+	return config, nil
+}
+
+func (s *Server) saveConfig(ctx context.Context, config *pb.Config) error {
+	conn, err := s.FDialServer(ctx, "dstore")
+	if err != nil {
+		return err
+	}
+	defer conn.Close()
+
+	data, err := proto.Marshal(config)
+	if err != nil {
+		return err
+	}
+
+	client := dspb.NewDStoreServiceClient(conn)
+	res, err := client.Write(ctx, &dspb.WriteRequest{Key: CONFIG_KEY, Value: &google_protobuf.Any{Value: data}})
+	if err != nil {
+		return err
+	}
+
+	if res.GetConsensus() < 0.5 {
+		return fmt.Errorf("could not get read consensus (%v)", res.GetConsensus())
+	}
+
+	return nil
+}
+
 // Init builds the server
 func Init() *Server {
-
 	s := &Server{
 		GoServer: &goserver.GoServer{},
 	}

@@ -11,3 +11,13 @@ message Config {
   int32 last_water = 3;
   int32 last_filter = 4;
 }
+
+message GetCleanRequest {}
+
+message GetCleanResponse {
+  int32 instance_id = 1;
+}
+
+service RecordCleanerService {
+  rpc GetClean(GetCleanRequest) returns (GetCleanResponse) {};
+}

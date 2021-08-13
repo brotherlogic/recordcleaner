@@ -91,6 +91,91 @@ func (x *Config) GetLastFilter() int32 {
 	return 0
 }
 
+type GetCleanRequest struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+}
+
+func (x *GetCleanRequest) Reset() {
+	*x = GetCleanRequest{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_recordcleaner_proto_msgTypes[1]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *GetCleanRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetCleanRequest) ProtoMessage() {}
+
+func (x *GetCleanRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_recordcleaner_proto_msgTypes[1]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetCleanRequest.ProtoReflect.Descriptor instead.
+func (*GetCleanRequest) Descriptor() ([]byte, []int) {
+	return file_recordcleaner_proto_rawDescGZIP(), []int{1}
+}
+
+type GetCleanResponse struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	InstanceId int32 `protobuf:"varint,1,opt,name=instance_id,json=instanceId,proto3" json:"instance_id,omitempty"`
+}
+
+func (x *GetCleanResponse) Reset() {
+	*x = GetCleanResponse{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_recordcleaner_proto_msgTypes[2]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *GetCleanResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetCleanResponse) ProtoMessage() {}
+
+func (x *GetCleanResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_recordcleaner_proto_msgTypes[2]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetCleanResponse.ProtoReflect.Descriptor instead.
+func (*GetCleanResponse) Descriptor() ([]byte, []int) {
+	return file_recordcleaner_proto_rawDescGZIP(), []int{2}
+}
+
+func (x *GetCleanResponse) GetInstanceId() int32 {
+	if x != nil {
+		return x.InstanceId
+	}
+	return 0
+}
+
 var File_recordcleaner_proto protoreflect.FileDescriptor
 
 var file_recordcleaner_proto_rawDesc = []byte{
@@ -112,11 +197,22 @@ var file_recordcleaner_proto_rawDesc = []byte{
 	0x73, 0x74, 0x43, 0x6c, 0x65, 0x61, 0x6e, 0x54, 0x69, 0x6d, 0x65, 0x45, 0x6e, 0x74, 0x72, 0x79,
 	0x12, 0x10, 0x0a, 0x03, 0x6b, 0x65, 0x79, 0x18, 0x01, 0x20, 0x01, 0x28, 0x05, 0x52, 0x03, 0x6b,
 	0x65, 0x79, 0x12, 0x14, 0x0a, 0x05, 0x76, 0x61, 0x6c, 0x75, 0x65, 0x18, 0x02, 0x20, 0x01, 0x28,
-	0x03, 0x52, 0x05, 0x76, 0x61, 0x6c, 0x75, 0x65, 0x3a, 0x02, 0x38, 0x01, 0x42, 0x2f, 0x5a, 0x2d,
-	0x67, 0x69, 0x74, 0x68, 0x75, 0x62, 0x2e, 0x63, 0x6f, 0x6d, 0x2f, 0x62, 0x72, 0x6f, 0x74, 0x68,
-	0x65, 0x72, 0x6c, 0x6f, 0x67, 0x69, 0x63, 0x2f, 0x72, 0x65, 0x63, 0x6f, 0x72, 0x64, 0x76, 0x61,
-	0x6c, 0x69, 0x64, 0x61, 0x74, 0x6f, 0x72, 0x2f, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x62, 0x06, 0x70,
-	0x72, 0x6f, 0x74, 0x6f, 0x33,
+	0x03, 0x52, 0x05, 0x76, 0x61, 0x6c, 0x75, 0x65, 0x3a, 0x02, 0x38, 0x01, 0x22, 0x11, 0x0a, 0x0f,
+	0x47, 0x65, 0x74, 0x43, 0x6c, 0x65, 0x61, 0x6e, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x22,
+	0x33, 0x0a, 0x10, 0x47, 0x65, 0x74, 0x43, 0x6c, 0x65, 0x61, 0x6e, 0x52, 0x65, 0x73, 0x70, 0x6f,
+	0x6e, 0x73, 0x65, 0x12, 0x1f, 0x0a, 0x0b, 0x69, 0x6e, 0x73, 0x74, 0x61, 0x6e, 0x63, 0x65, 0x5f,
+	0x69, 0x64, 0x18, 0x01, 0x20, 0x01, 0x28, 0x05, 0x52, 0x0a, 0x69, 0x6e, 0x73, 0x74, 0x61, 0x6e,
+	0x63, 0x65, 0x49, 0x64, 0x32, 0x69, 0x0a, 0x14, 0x52, 0x65, 0x63, 0x6f, 0x72, 0x64, 0x43, 0x6c,
+	0x65, 0x61, 0x6e, 0x65, 0x72, 0x53, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x12, 0x51, 0x0a, 0x08,
+	0x47, 0x65, 0x74, 0x43, 0x6c, 0x65, 0x61, 0x6e, 0x12, 0x20, 0x2e, 0x72, 0x65, 0x63, 0x6f, 0x72,
+	0x64, 0x76, 0x61, 0x6c, 0x69, 0x64, 0x61, 0x74, 0x6f, 0x72, 0x2e, 0x47, 0x65, 0x74, 0x43, 0x6c,
+	0x65, 0x61, 0x6e, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x21, 0x2e, 0x72, 0x65, 0x63,
+	0x6f, 0x72, 0x64, 0x76, 0x61, 0x6c, 0x69, 0x64, 0x61, 0x74, 0x6f, 0x72, 0x2e, 0x47, 0x65, 0x74,
+	0x43, 0x6c, 0x65, 0x61, 0x6e, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22, 0x00, 0x42,
+	0x2f, 0x5a, 0x2d, 0x67, 0x69, 0x74, 0x68, 0x75, 0x62, 0x2e, 0x63, 0x6f, 0x6d, 0x2f, 0x62, 0x72,
+	0x6f, 0x74, 0x68, 0x65, 0x72, 0x6c, 0x6f, 0x67, 0x69, 0x63, 0x2f, 0x72, 0x65, 0x63, 0x6f, 0x72,
+	0x64, 0x76, 0x61, 0x6c, 0x69, 0x64, 0x61, 0x74, 0x6f, 0x72, 0x2f, 0x70, 0x72, 0x6f, 0x74, 0x6f,
+	0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
 }
 
 var (
@@ -131,15 +227,19 @@ func file_recordcleaner_proto_rawDescGZIP() []byte {
 	return file_recordcleaner_proto_rawDescData
 }
 
-var file_recordcleaner_proto_msgTypes = make([]protoimpl.MessageInfo, 2)
+var file_recordcleaner_proto_msgTypes = make([]protoimpl.MessageInfo, 4)
 var file_recordcleaner_proto_goTypes = []interface{}{
-	(*Config)(nil), // 0: recordvalidator.Config
-	nil,            // 1: recordvalidator.Config.LastCleanTimeEntry
+	(*Config)(nil),           // 0: recordvalidator.Config
+	(*GetCleanRequest)(nil),  // 1: recordvalidator.GetCleanRequest
+	(*GetCleanResponse)(nil), // 2: recordvalidator.GetCleanResponse
+	nil,                      // 3: recordvalidator.Config.LastCleanTimeEntry
 }
 var file_recordcleaner_proto_depIdxs = []int32{
-	1, // 0: recordvalidator.Config.last_clean_time:type_name -> recordvalidator.Config.LastCleanTimeEntry
-	1, // [1:1] is the sub-list for method output_type
-	1, // [1:1] is the sub-list for method input_type
+	3, // 0: recordvalidator.Config.last_clean_time:type_name -> recordvalidator.Config.LastCleanTimeEntry
+	1, // 1: recordvalidator.RecordCleanerService.GetClean:input_type -> recordvalidator.GetCleanRequest
+	2, // 2: recordvalidator.RecordCleanerService.GetClean:output_type -> recordvalidator.GetCleanResponse
+	2, // [2:3] is the sub-list for method output_type
+	1, // [1:2] is the sub-list for method input_type
 	1, // [1:1] is the sub-list for extension type_name
 	1, // [1:1] is the sub-list for extension extendee
 	0, // [0:1] is the sub-list for field type_name
@@ -163,6 +263,30 @@ func file_recordcleaner_proto_init() {
 				return nil
 			}
 		}
+		file_recordcleaner_proto_msgTypes[1].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*GetCleanRequest); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_recordcleaner_proto_msgTypes[2].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*GetCleanResponse); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
 	}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
@@ -170,9 +294,9 @@ func file_recordcleaner_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: file_recordcleaner_proto_rawDesc,
 			NumEnums:      0,
-			NumMessages:   2,
+			NumMessages:   4,
 			NumExtensions: 0,
-			NumServices:   0,
+			NumServices:   1,
 		},
 		GoTypes:           file_recordcleaner_proto_goTypes,
 		DependencyIndexes: file_recordcleaner_proto_depIdxs,

@@ -10,10 +10,8 @@ import (
 	"github.com/brotherlogic/goserver/utils"
 
 	pbrc "github.com/brotherlogic/recordcollection/proto"
+	pb "github.com/brotherlogic/recordcleaner/proto"
 
-	//Needed to pull in gzip encoding init
-	_ "google.golang.org/grpc/encoding/gzip"
-	"google.golang.org/grpc/resolver"
 )
 
 func init() {
@@ -31,6 +29,7 @@ func main() {
 	defer conn.Close()
 
 	client := pbrc.NewClientUpdateServiceClient(conn)
+	lclient := pb.NewRecordCleanerServiceClient(conn)
 
 	switch os.Args[1] {
 	case "update":
@@ -42,6 +41,14 @@ func main() {
 				res, err := client.ClientUpdate(ctx, &pbrc.ClientUpdateRequest{InstanceId: int32(*id)})
 				if err != nil {
 					log.Fatalf("Error on Add Record: %v", err)
+				}
+				fmt.Printf("%v and %v", res, err)
+			}
+		}
+	case "get":
+				res, err := lclient.GetClean(ctx, &pb.GetCleanRequest{})
+				if err != nil {
+					log.Fatalf("Error on Get Clean: %v", err)
 				}
 				fmt.Printf("%v and %v", res, err)
 			}

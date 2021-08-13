@@ -11,6 +11,8 @@ import (
 	"github.com/prometheus/client_golang/prometheus/promauto"
 	"golang.org/x/net/context"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 	"google.golang.org/protobuf/proto"
 
 	dspb "github.com/brotherlogic/dstore/proto"
@@ -50,7 +52,12 @@ func (s *Server) loadConfig(ctx context.Context) (*pb.Config, error) {
 	client := dspb.NewDStoreServiceClient(conn)
 	res, err := client.Read(ctx, &dspb.ReadRequest{Key: CONFIG_KEY})
 	if err != nil {
+		if status.Convert(err).Code() == codes.NotFound {
+			return &pb.Config{LastCleanTime: make(map[int32]int64)}, nil
+		}
+
 		return nil, err
+
 	}
 
 	if res.GetConsensus() < 0.5 {

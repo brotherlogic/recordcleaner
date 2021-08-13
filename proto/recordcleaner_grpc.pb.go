@@ -31,7 +31,7 @@ func NewRecordCleanerServiceClient(cc grpc.ClientConnInterface) RecordCleanerSer
 
 func (c *recordCleanerServiceClient) GetClean(ctx context.Context, in *GetCleanRequest, opts ...grpc.CallOption) (*GetCleanResponse, error) {
 	out := new(GetCleanResponse)
-	err := c.cc.Invoke(ctx, "/recordvalidator.RecordCleanerService/GetClean", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/recordcleaner.RecordCleanerService/GetClean", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -74,7 +74,7 @@ func _RecordCleanerService_GetClean_Handler(srv interface{}, ctx context.Context
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/recordvalidator.RecordCleanerService/GetClean",
+		FullMethod: "/recordcleaner.RecordCleanerService/GetClean",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(RecordCleanerServiceServer).GetClean(ctx, req.(*GetCleanRequest))
@@ -86,7 +86,7 @@ func _RecordCleanerService_GetClean_Handler(srv interface{}, ctx context.Context
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
 var RecordCleanerService_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "recordvalidator.RecordCleanerService",
+	ServiceName: "recordcleaner.RecordCleanerService",
 	HandlerType: (*RecordCleanerServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{

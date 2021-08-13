@@ -8,10 +8,10 @@ import (
 	"time"
 
 	"github.com/brotherlogic/goserver/utils"
+	"google.golang.org/grpc/resolver"
 
-	pbrc "github.com/brotherlogic/recordcollection/proto"
 	pb "github.com/brotherlogic/recordcleaner/proto"
-
+	pbrc "github.com/brotherlogic/recordcollection/proto"
 )
 
 func init() {
@@ -46,12 +46,10 @@ func main() {
 			}
 		}
 	case "get":
-				res, err := lclient.GetClean(ctx, &pb.GetCleanRequest{})
-				if err != nil {
-					log.Fatalf("Error on Get Clean: %v", err)
-				}
-				fmt.Printf("%v and %v", res, err)
-			}
+		res, err := lclient.GetClean(ctx, &pb.GetCleanRequest{})
+		if err != nil {
+			log.Fatalf("Error on Get Clean: %v", err)
 		}
+		fmt.Printf("%v and %v", res, err)
 	}
 }

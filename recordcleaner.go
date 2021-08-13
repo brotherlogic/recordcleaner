@@ -5,23 +5,16 @@ import (
 	"fmt"
 	"io/ioutil"
 	"log"
-	"time"
 
 	"github.com/brotherlogic/goserver"
-	"github.com/brotherlogic/goserver/utils"
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/promauto"
 	"golang.org/x/net/context"
 	"google.golang.org/grpc"
-	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/status"
 
-	gdpb "github.com/brotherlogic/godiscogs"
 	pbg "github.com/brotherlogic/goserver/proto"
 	rcpb "github.com/brotherlogic/recordcollection/proto"
-	pb "github.com/brotherlogic/recordvalidator/proto"
 )
-
 
 var (
 	tracked = promauto.NewGauge(prometheus.GaugeOpts{
@@ -49,18 +42,7 @@ func Init() *Server {
 	return s
 }
 
-
-
-
-
-
 func (s *Server) getRecord(ctx context.Context, iid int32) (*rcpb.Record, error) {
-	if s.failLoadAll {
-		return nil, fmt.Errorf("Built to fail")
-	}
-	if s.test {
-		return &rcpb.Record{}, nil
-	}
 	conn, err := s.FDialServer(ctx, "recordcollection")
 	if err != nil {
 		return nil, err
@@ -74,7 +56,6 @@ func (s *Server) getRecord(ctx context.Context, iid int32) (*rcpb.Record, error)
 	}
 	return r.GetRecord(), nil
 }
-
 
 // DoRegister does RPC registration
 func (s *Server) DoRegister(server *grpc.Server) {
@@ -98,9 +79,7 @@ func (s *Server) Mote(ctx context.Context, master bool) error {
 
 // GetState gets the state of the server
 func (s *Server) GetState() []*pbg.State {
-	return []*pbg.State{
-		&pbg.State{Key: "magic", Text: fmt.Sprintf("%v", found)},
-	}
+	return []*pbg.State{}
 }
 
 func main() {
@@ -120,15 +99,6 @@ func main() {
 	if err != nil {
 		return
 	}
-
-	//Do a load to prepopulate metrics
-	ctx, cancel := utils.ManualContext("rvsu", time.Minute)
-	if _, err := server.load(ctx); err != nil {
-		server.Log(fmt.Sprintf("Unable to load: %v", err))
-		time.Sleep(time.Second * 5)
-		return
-	}
-	cancel()
 
 	fmt.Printf("%v", server.Serve())
 }

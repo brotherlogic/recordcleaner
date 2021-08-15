@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"sort"
 	"time"
 
 	"golang.org/x/net/context"
@@ -88,6 +89,10 @@ func (s *Server) GetClean(ctx context.Context, _ *pb.GetCleanRequest) (*pb.GetCl
 	if err != nil {
 		return nil, err
 	}
+
+	sort.SliceStable(ids.InstanceIds, func(i, j int) bool {
+		return ids.InstanceIds[i] < ids.InstanceIds[j]
+	})
 
 	if len(ids.GetInstanceIds()) == 0 {
 		return nil, status.Errorf(codes.ResourceExhausted, "Nothing to clean")

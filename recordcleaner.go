@@ -35,6 +35,10 @@ var (
 		Name: "recordcleaner_cleaned",
 		Help: "The size of the print queue",
 	})
+	cleanedToday = promauto.NewGauge(prometheus.GaugeOpts{
+		Name: "recordcleaner_today",
+		Help: "The size of the print queue",
+	})
 )
 
 //Server main server type
@@ -69,6 +73,8 @@ func (s *Server) loadConfig(ctx context.Context) (*pb.Config, error) {
 	if err != nil {
 		return nil, err
 	}
+
+	cleanedToday.Set(float64(config.GetDayCount()))
 
 	return config, nil
 }

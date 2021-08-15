@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"time"
 
 	"golang.org/x/net/context"
 	"google.golang.org/grpc/codes"
@@ -35,6 +36,18 @@ func (s *Server) ClientUpdate(ctx context.Context, in *rcpb.ClientUpdateRequest)
 			if err != nil {
 				return nil, err
 			}
+
+			if time.Now().YearDay() == int(config.GetDayOfYear()) {
+				config.DayCount++
+			} else {
+				config.DayCount = 0
+				config.DayOfYear = int32(time.Now().YearDay())
+			}
+
+			err = s.saveConfig(ctx, config)
+			if err != nil {
+				return nil, err
+			}
 		}
 	} else {
 		rec, err := s.getRecord(ctx, in.GetInstanceId())
@@ -52,6 +65,17 @@ func (s *Server) ClientUpdate(ctx context.Context, in *rcpb.ClientUpdateRequest)
 }
 
 func (s *Server) GetClean(ctx context.Context, _ *pb.GetCleanRequest) (*pb.GetCleanResponse, error) {
+
+	config, err := s.loadConfig(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	if int32(time.Now().YearDay()) == config.GetDayOfYear() {
+		if config.GetDayCount() > 10 {
+			return nil, fmt.Errorf("You've cleaned %v records today, that's plenty", config.GetDayCount())
+		}
+	}
 
 	conn, err := s.FDialServer(ctx, "recordcollection")
 	if err != nil {

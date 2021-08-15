@@ -10,6 +10,9 @@ message Config {
   
   int32 last_water = 3;
   int32 last_filter = 4;
+
+  int32 day_of_year = 5;
+  int32 day_count = 6;
 }
 
 message GetCleanRequest {}

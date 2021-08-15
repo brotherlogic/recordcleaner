@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"log"
+	"time"
 
 	"github.com/brotherlogic/goserver"
 	"github.com/prometheus/client_golang/prometheus"
@@ -17,6 +18,7 @@ import (
 
 	dspb "github.com/brotherlogic/dstore/proto"
 	pbg "github.com/brotherlogic/goserver/proto"
+	"github.com/brotherlogic/goserver/utils"
 	pb "github.com/brotherlogic/recordcleaner/proto"
 	rcpb "github.com/brotherlogic/recordcollection/proto"
 	google_protobuf "github.com/golang/protobuf/ptypes/any"
@@ -173,6 +175,11 @@ func main() {
 	if err != nil {
 		return
 	}
+
+	// Fill the mtrics out before starting
+	ctx, cancel := utils.ManualContext("recordcleaner-startup", time.Minute)
+	server.loadConfig(ctx)
+	cancel()
 
 	fmt.Printf("%v", server.Serve())
 }

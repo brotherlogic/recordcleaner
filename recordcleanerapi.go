@@ -40,7 +40,7 @@ func (s *Server) ClientUpdate(ctx context.Context, in *rcpb.ClientUpdateRequest)
 			if time.Now().YearDay() == int(config.GetDayOfYear()) {
 				config.DayCount++
 			} else {
-				config.DayCount = 0
+				config.DayCount = 1
 				config.DayOfYear = int32(time.Now().YearDay())
 			}
 

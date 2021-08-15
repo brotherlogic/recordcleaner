@@ -23,8 +23,6 @@ func (s *Server) ClientUpdate(ctx context.Context, in *rcpb.ClientUpdateRequest)
 		config.LastCleanTime = make(map[int32]int64)
 	}
 
-	s.Log(fmt.Sprintf("%v", config))
-
 	if ld, ok := config.GetLastCleanTime()[in.GetInstanceId()]; ok {
 		rec, err := s.getRecord(ctx, in.GetInstanceId())
 		if err != nil {
@@ -43,6 +41,8 @@ func (s *Server) ClientUpdate(ctx context.Context, in *rcpb.ClientUpdateRequest)
 				config.DayCount = 1
 				config.DayOfYear = int32(time.Now().YearDay())
 			}
+
+			s.Log(fmt.Sprintf("Day clean %v and %v and %v", config.DayCount, config.DayOfYear, time.Now().YearDay()))
 
 			err = s.saveConfig(ctx, config)
 			if err != nil {

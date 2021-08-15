@@ -21,6 +21,7 @@ func (s *Server) metrics(config *pb.Config) {
 
 	tracked.Set(float64(total))
 	cleaned.Set(float64(done))
+	cleanedToday.Set(float64(config.GetDayCount()))
 }
 
 func (s *Server) newClean(ctx context.Context, rec *rcpb.Record) error {

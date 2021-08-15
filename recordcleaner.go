@@ -74,7 +74,7 @@ func (s *Server) loadConfig(ctx context.Context) (*pb.Config, error) {
 		return nil, err
 	}
 
-	cleanedToday.Set(float64(config.GetDayCount()))
+	s.metrics(config)
 
 	return config, nil
 }

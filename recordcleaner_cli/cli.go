@@ -59,6 +59,6 @@ func main() {
 		if err != nil {
 			log.Fatalf("Cannot get record: %v", err)
 		}
-		fmt.Printf("%v\n", rec.GetRecord().GetRelease().GetTitle())
+		fmt.Printf("[%v] %v\n", rec.GetRecord().GetRelease().GetInstanceId(), rec.GetRecord().GetRelease().GetTitle())
 	}
 }

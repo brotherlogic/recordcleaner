@@ -101,6 +101,8 @@ func (s *Server) saveConfig(ctx context.Context, config *pb.Config) error {
 		return fmt.Errorf("could not get read consensus (%v)", res.GetConsensus())
 	}
 
+	s.metrics(config)
+
 	return nil
 }
 

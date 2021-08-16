@@ -19,6 +19,7 @@ message GetCleanRequest {}
 
 message GetCleanResponse {
   int32 instance_id = 1;
+  repeated int32 seen = 2;
 }
 
 service RecordCleanerService {

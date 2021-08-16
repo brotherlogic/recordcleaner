@@ -94,10 +94,15 @@ func (s *Server) GetClean(ctx context.Context, _ *pb.GetCleanRequest) (*pb.GetCl
 		return ids.InstanceIds[i] < ids.InstanceIds[j]
 	})
 
+	var sids []int32
+	for id, _ := range config.GetLastCleanTime() {
+		sids = append(sids, id)
+	}
+
 	if len(ids.GetInstanceIds()) == 0 {
 		return nil, status.Errorf(codes.ResourceExhausted, "Nothing to clean")
 	}
 
-	return &pb.GetCleanResponse{InstanceId: ids.GetInstanceIds()[0]}, nil
+	return &pb.GetCleanResponse{InstanceId: ids.GetInstanceIds()[0], Seen: sids}, nil
 
 }

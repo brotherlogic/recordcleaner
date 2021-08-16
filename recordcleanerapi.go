@@ -43,7 +43,7 @@ func (s *Server) ClientUpdate(ctx context.Context, in *rcpb.ClientUpdateRequest)
 				config.DayOfYear = int32(time.Now().YearDay())
 			}
 
-			s.Log(fmt.Sprintf("Day clean %v and %v and %v from %v (since %v and %v)", config.DayCount, config.DayOfYear, time.Now().YearDay(), in.GetInstanceId(), rec.GetMetadata().GetLastCleanDate(), ld))
+			s.Log(fmt.Sprintf("Day clean %v and %v and %v from %v (since %v and %v) => %v", config.DayCount, config.DayOfYear, time.Now().YearDay(), in.GetInstanceId(), rec.GetMetadata().GetLastCleanDate(), ld, config.GetLastCleanTime()[in.GetInstanceId()]))
 
 			err = s.saveConfig(ctx, config)
 			if err != nil {

@@ -56,7 +56,7 @@ func (s *Server) ClientUpdate(ctx context.Context, in *rcpb.ClientUpdateRequest)
 			return nil, err
 		}
 
-		err = s.newClean(ctx, rec)
+		_, err = s.newClean(ctx, rec)
 		if err != nil {
 			return nil, err
 		}

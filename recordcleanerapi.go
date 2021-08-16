@@ -31,7 +31,7 @@ func (s *Server) ClientUpdate(ctx context.Context, in *rcpb.ClientUpdateRequest)
 		}
 
 		if rec.GetMetadata().GetLastCleanDate() != ld {
-			err := s.newClean(ctx, rec)
+			config, err := s.newClean(ctx, rec)
 			if err != nil {
 				return nil, err
 			}

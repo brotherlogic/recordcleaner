@@ -24,18 +24,18 @@ func (s *Server) metrics(config *pb.Config) {
 	cleanedToday.Set(float64(config.GetDayCount()))
 }
 
-func (s *Server) newClean(ctx context.Context, rec *rcpb.Record) error {
+func (s *Server) newClean(ctx context.Context, rec *rcpb.Record) (*pb.Config, error) {
 	//Run this under a lock
 	key, err := s.RunLockingElection(ctx, "recordcleaner")
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	defer s.ReleaseLockingElection(ctx, "recordcleaner", key)
 
 	config, err := s.loadConfig(ctx)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	config.CurrentCount++
@@ -43,5 +43,5 @@ func (s *Server) newClean(ctx context.Context, rec *rcpb.Record) error {
 
 	s.metrics(config)
 
-	return s.saveConfig(ctx, config)
+	return config, s.saveConfig(ctx, config)
 }

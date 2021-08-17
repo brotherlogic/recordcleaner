@@ -97,7 +97,7 @@ func (s *Server) GetClean(ctx context.Context, _ *pb.GetCleanRequest) (*pb.GetCl
 	}
 
 	if int32(time.Now().YearDay()) == config.GetDayOfYear() {
-		if config.GetDayCount() > 10 {
+		if config.GetDayCount() >= 10 {
 			return nil, status.Errorf(codes.FailedPrecondition, "you've cleaned %v records today, that's plenty", config.GetDayCount())
 		}
 	}

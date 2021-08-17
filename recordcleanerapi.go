@@ -96,6 +96,7 @@ func (s *Server) GetClean(ctx context.Context, _ *pb.GetCleanRequest) (*pb.GetCl
 		return nil, status.Errorf(codes.FailedPrecondition, "You need to change the water, it was last done on %v", time.Unix(config.GetLastFilter(), 0))
 	}
 
+	s.Log(fmt.Sprintf("HERE %v and %v and %v", time.Now().YearDay(), config.GetDayOfYear(), config.GetDayCount()))
 	if int32(time.Now().YearDay()) == config.GetDayOfYear() {
 		if config.GetDayCount() >= 10 {
 			return nil, status.Errorf(codes.FailedPrecondition, "you've cleaned %v records today, that's plenty", config.GetDayCount())

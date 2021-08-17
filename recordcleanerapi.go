@@ -27,6 +27,11 @@ func (s *Server) ClientUpdate(ctx context.Context, in *rcpb.ClientUpdateRequest)
 	if ld, ok := config.GetLastCleanTime()[in.GetInstanceId()]; ok {
 		rec, err := s.getRecord(ctx, in.GetInstanceId())
 		if err != nil {
+			if status.Convert(err).Code() == codes.OutOfRange {
+				delete(config.LastCleanTime, in.GetInstanceId())
+				return &rcpb.ClientUpdateResponse{}, s.saveConfig(ctx, config)
+			}
+
 			return nil, err
 		}
 

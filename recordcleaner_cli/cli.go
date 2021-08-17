@@ -60,5 +60,15 @@ func main() {
 			log.Fatalf("Cannot get record: %v", err)
 		}
 		fmt.Printf("[%v] %v\n", rec.GetRecord().GetRelease().GetInstanceId(), rec.GetRecord().GetRelease().GetTitle())
+	case "refresh":
+		res, err := lclient.GetClean(ctx, &pb.GetCleanRequest{})
+		if err != nil {
+			log.Fatalf("Error on Get Clean: %v", err)
+		}
+		for _, id := range res.GetSeen() {
+			res, err := client.ClientUpdate(ctx, &pbrc.ClientUpdateRequest{InstanceId: int32(id)})
+			fmt.Printf("Refresh %v and %v\n", res, err)
+		}
+
 	}
 }

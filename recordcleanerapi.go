@@ -103,11 +103,11 @@ func (s *Server) GetClean(ctx context.Context, _ *pb.GetCleanRequest) (*pb.GetCl
 	water.Set(float64(waterCount))
 	filter.Set(float64(filterCount))
 
-	if waterCount > 30 {
+	if waterCount >= 30 {
 		return nil, status.Errorf(codes.FailedPrecondition, "You need to change the water, it was last done on %v", time.Unix(config.GetLastWater(), 0))
 	}
 
-	if filterCount > 50 {
+	if filterCount >= 50 {
 		return nil, status.Errorf(codes.FailedPrecondition, "You need to change the water, it was last done on %v", time.Unix(config.GetLastFilter(), 0))
 	}
 

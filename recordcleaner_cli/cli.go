@@ -71,9 +71,9 @@ func main() {
 		}
 	case "water":
 		res, err := lclient.Service(ctx, &pb.ServiceRequest{Water: true})
-		fmt.Printf("Watered: %v and %v", res, err)
+		fmt.Printf("Watered: %v and %v\n", res, err)
 	case "filter":
 		res, err := lclient.Service(ctx, &pb.ServiceRequest{Fileter: true})
-		fmt.Printf("Filtered: %v and %v", res, err)
+		fmt.Printf("Filtered: %v and %v\n", res, err)
 	}
 }

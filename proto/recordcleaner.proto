@@ -15,13 +15,22 @@ message Config {
   int32 day_count = 6;
 }
 
-message GetCleanRequest {}
+message GetCleanRequest {
+}
 
 message GetCleanResponse {
   int32 instance_id = 1;
   repeated int32 seen = 2;
 }
 
+message ServiceRequest {
+  bool water = 1;
+  bool fileter = 2;
+}
+
+message ServiceResponse {}
+
 service RecordCleanerService {
   rpc GetClean(GetCleanRequest) returns (GetCleanResponse) {};
+  rpc Service(ServiceRequest) returns (ServiceResponse) {};
 }

@@ -83,6 +83,22 @@ func (s *Server) ClientUpdate(ctx context.Context, in *rcpb.ClientUpdateRequest)
 	return &rcpb.ClientUpdateResponse{}, nil
 }
 
+func (s *Server) Service(ctx context.Context, req *pb.ServiceRequest) (*pb.ServiceResponse, error) {
+	config, err := s.loadConfig(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	if req.GetFileter() {
+		config.LastFilter = time.Now().Unix()
+	}
+	if req.GetWater() {
+		config.LastWater = time.Now().Unix()
+	}
+
+	return &pb.ServiceResponse{}, s.saveConfig(ctx, config)
+}
+
 func (s *Server) GetClean(ctx context.Context, _ *pb.GetCleanRequest) (*pb.GetCleanResponse, error) {
 
 	config, err := s.loadConfig(ctx)

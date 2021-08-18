@@ -19,6 +19,7 @@ const _ = grpc.SupportPackageIsVersion7
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type RecordCleanerServiceClient interface {
 	GetClean(ctx context.Context, in *GetCleanRequest, opts ...grpc.CallOption) (*GetCleanResponse, error)
+	Service(ctx context.Context, in *ServiceRequest, opts ...grpc.CallOption) (*ServiceResponse, error)
 }
 
 type recordCleanerServiceClient struct {
@@ -38,11 +39,21 @@ func (c *recordCleanerServiceClient) GetClean(ctx context.Context, in *GetCleanR
 	return out, nil
 }
 
+func (c *recordCleanerServiceClient) Service(ctx context.Context, in *ServiceRequest, opts ...grpc.CallOption) (*ServiceResponse, error) {
+	out := new(ServiceResponse)
+	err := c.cc.Invoke(ctx, "/recordcleaner.RecordCleanerService/Service", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // RecordCleanerServiceServer is the server API for RecordCleanerService service.
 // All implementations should embed UnimplementedRecordCleanerServiceServer
 // for forward compatibility
 type RecordCleanerServiceServer interface {
 	GetClean(context.Context, *GetCleanRequest) (*GetCleanResponse, error)
+	Service(context.Context, *ServiceRequest) (*ServiceResponse, error)
 }
 
 // UnimplementedRecordCleanerServiceServer should be embedded to have forward compatible implementations.
@@ -51,6 +62,9 @@ type UnimplementedRecordCleanerServiceServer struct {
 
 func (UnimplementedRecordCleanerServiceServer) GetClean(context.Context, *GetCleanRequest) (*GetCleanResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetClean not implemented")
+}
+func (UnimplementedRecordCleanerServiceServer) Service(context.Context, *ServiceRequest) (*ServiceResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Service not implemented")
 }
 
 // UnsafeRecordCleanerServiceServer may be embedded to opt out of forward compatibility for this service.
@@ -82,6 +96,24 @@ func _RecordCleanerService_GetClean_Handler(srv interface{}, ctx context.Context
 	return interceptor(ctx, in, info, handler)
 }
 
+func _RecordCleanerService_Service_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ServiceRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RecordCleanerServiceServer).Service(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/recordcleaner.RecordCleanerService/Service",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RecordCleanerServiceServer).Service(ctx, req.(*ServiceRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // RecordCleanerService_ServiceDesc is the grpc.ServiceDesc for RecordCleanerService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -92,6 +124,10 @@ var RecordCleanerService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetClean",
 			Handler:    _RecordCleanerService_GetClean_Handler,
+		},
+		{
+			MethodName: "Service",
+			Handler:    _RecordCleanerService_Service_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

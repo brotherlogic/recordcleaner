@@ -11,6 +11,19 @@ import (
 
 	pb "github.com/brotherlogic/recordcleaner/proto"
 	rcpb "github.com/brotherlogic/recordcollection/proto"
+	"github.com/prometheus/client_golang/prometheus"
+	"github.com/prometheus/client_golang/prometheus/promauto"
+)
+
+var (
+	water = promauto.NewGauge(prometheus.GaugeOpts{
+		Name: "recordcleaner_water",
+		Help: "The size of the print queue",
+	})
+	filter = promauto.NewGauge(prometheus.GaugeOpts{
+		Name: "recordcleaner_filter",
+		Help: "The size of the print queue",
+	})
 )
 
 //ClientUpdate forces a move
@@ -87,6 +100,8 @@ func (s *Server) GetClean(ctx context.Context, _ *pb.GetCleanRequest) (*pb.GetCl
 			filterCount++
 		}
 	}
+	water.Set(float64(waterCount))
+	filter.Set(float64(filterCount))
 
 	if waterCount > 30 {
 		return nil, status.Errorf(codes.FailedPrecondition, "You need to change the water, it was last done on %v", time.Unix(config.GetLastWater(), 0))

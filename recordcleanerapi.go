@@ -112,7 +112,7 @@ func (s *Server) GetClean(ctx context.Context, _ *pb.GetCleanRequest) (*pb.GetCl
 		if date > int64(config.GetLastWater()) {
 			waterCount++
 		}
-		if date > int64(config.GetLastWater()) {
+		if date > int64(config.GetLastFilter()) {
 			filterCount++
 		}
 	}

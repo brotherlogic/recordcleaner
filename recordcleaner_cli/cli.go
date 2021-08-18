@@ -69,6 +69,11 @@ func main() {
 			res, err := client.ClientUpdate(ctx, &pbrc.ClientUpdateRequest{InstanceId: int32(id)})
 			fmt.Printf("Refresh %v and %v\n", res, err)
 		}
-
+	case "water":
+		res, err := lclient.Service(ctx, &pb.ServiceRequest{Water: true})
+		fmt.Printf("Watered: %v and %v", res, err)
+	case "filter":
+		res, err := lclient.Service(ctx, &pb.ServiceRequest{Fileter: true})
+		fmt.Printf("Filtered: %v and %v", res, err)
 	}
 }

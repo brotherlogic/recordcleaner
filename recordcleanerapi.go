@@ -124,7 +124,7 @@ func (s *Server) GetClean(ctx context.Context, _ *pb.GetCleanRequest) (*pb.GetCl
 	}
 
 	if filterCount >= 50 {
-		return nil, status.Errorf(codes.FailedPrecondition, "You need to change the water, it was last done on %v", time.Unix(config.GetLastFilter(), 0))
+		return nil, status.Errorf(codes.FailedPrecondition, "You need to change the filter, it was last done on %v", time.Unix(config.GetLastFilter(), 0))
 	}
 
 	s.Log(fmt.Sprintf("HERE %v and %v and %v", time.Now().YearDay(), config.GetDayOfYear(), config.GetDayCount()))

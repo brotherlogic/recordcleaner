@@ -167,6 +167,9 @@ func (s *Server) GetClean(ctx context.Context, req *pb.GetCleanRequest) (*pb.Get
 		return nil, status.Errorf(codes.ResourceExhausted, "Nothing to clean")
 	}
 
-	return &pb.GetCleanResponse{InstanceId: ids.GetInstanceIds()[0], Seen: sids}, nil
+	if len(ids.GetInstanceIds()) == 0 {
+		return &pb.GetCleanResponse{Seen: sids}, nil
+	}
 
+	return &pb.GetCleanResponse{InstanceId: ids.GetInstanceIds()[0], Seen: sids}, nil
 }

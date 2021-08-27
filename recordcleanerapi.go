@@ -178,16 +178,18 @@ func (s *Server) GetClean(ctx context.Context, req *pb.GetCleanRequest) (*pb.Get
 				return nil, err
 			}
 
+			if len(ids.GetInstanceIds()) == 0 {
+				return nil, status.Errorf(codes.ResourceExhausted, "Nothing to clean")
+			}
+
 			config.CurrentBoxPick = ids.GetInstanceIds()[rand.Intn(len(ids.GetInstanceIds()))]
 			err = s.saveConfig(ctx, config)
 			if err != nil {
 				return nil, err
 			}
-
-			return &pb.GetCleanResponse{InstanceId: config.CurrentBoxPick, Seen: sids}, nil
 		}
 
-		return nil, status.Errorf(codes.ResourceExhausted, "Nothing to clean")
+		return &pb.GetCleanResponse{InstanceId: config.CurrentBoxPick, Seen: sids}, nil
 	}
 
 	if len(ids.GetInstanceIds()) == 0 {

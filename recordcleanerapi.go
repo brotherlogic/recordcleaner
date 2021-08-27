@@ -48,6 +48,10 @@ func (s *Server) ClientUpdate(ctx context.Context, in *rcpb.ClientUpdateRequest)
 			return nil, err
 		}
 
+		if ld == 0 {
+			s.Log(fmt.Sprintf("UNCLEAN %v", in.GetInstanceId()))
+		}
+
 		if rec.GetMetadata().GetFiledUnder() != rcpb.ReleaseMetadata_FILE_12_INCH || rec.GetMetadata().GetFiledUnder() != rcpb.ReleaseMetadata_FILE_7_INCH {
 			delete(config.LastCleanTime, in.GetInstanceId())
 
@@ -135,7 +139,6 @@ func (s *Server) GetClean(ctx context.Context, req *pb.GetCleanRequest) (*pb.Get
 		return nil, status.Errorf(codes.FailedPrecondition, "You need to change the filter, it was last done on %v", time.Unix(config.GetLastFilter(), 0))
 	}
 
-	s.Log(fmt.Sprintf("HERE %v and %v and %v", time.Now().YearDay(), config.GetDayOfYear(), config.GetDayCount()))
 	if int32(time.Now().YearDay()) == config.GetDayOfYear() {
 		if config.GetDayCount() >= 10 {
 			return nil, status.Errorf(codes.FailedPrecondition, "you've cleaned %v records today, that's plenty", config.GetDayCount())

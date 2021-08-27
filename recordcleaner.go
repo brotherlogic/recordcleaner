@@ -103,7 +103,7 @@ func (s *Server) saveConfig(ctx context.Context, config *pb.Config) error {
 	}
 
 	if res.GetConsensus() < 0.5 {
-		return fmt.Errorf("could not get read consensus (%v)", res.GetConsensus())
+		return fmt.Errorf("could not get write consensus (%v)", res.GetConsensus())
 	}
 
 	s.metrics(config)

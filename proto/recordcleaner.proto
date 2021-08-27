@@ -13,6 +13,8 @@ message Config {
 
   int32 day_of_year = 5;
   int32 day_count = 6;
+
+  int32 current_box_pick = 7;
 }
 
 message GetCleanRequest {

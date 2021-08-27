@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"math/rand"
 	"sort"
 	"time"
 
@@ -46,6 +47,10 @@ func (s *Server) ClientUpdate(ctx context.Context, in *rcpb.ClientUpdateRequest)
 			}
 
 			return nil, err
+		}
+
+		if config.GetCurrentBoxPick() == in.GetInstanceId() {
+			config.CurrentBoxPick = 0
 		}
 
 		if ld == 0 {
@@ -167,6 +172,21 @@ func (s *Server) GetClean(ctx context.Context, req *pb.GetCleanRequest) (*pb.Get
 	}
 
 	if !req.GetIncludeSeen() && len(ids.GetInstanceIds()) == 0 {
+		if config.GetCurrentBoxPick() == 0 {
+			ids, err := client.QueryRecords(ctx, &rcpb.QueryRecordsRequest{Query: &rcpb.QueryRecordsRequest_FolderId{int32(3282985)}})
+			if err != nil {
+				return nil, err
+			}
+
+			config.CurrentBoxPick = ids.GetInstanceIds()[rand.Intn(len(ids.GetInstanceIds()))]
+			err = s.saveConfig(ctx, config)
+			if err != nil {
+				return nil, err
+			}
+
+			return &pb.GetCleanResponse{InstanceId: config.CurrentBoxPick, Seen: sids}, nil
+		}
+
 		return nil, status.Errorf(codes.ResourceExhausted, "Nothing to clean")
 	}
 

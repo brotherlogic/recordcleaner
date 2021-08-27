@@ -61,7 +61,7 @@ func main() {
 		}
 		fmt.Printf("[%v] %v\n", rec.GetRecord().GetRelease().GetInstanceId(), rec.GetRecord().GetRelease().GetTitle())
 	case "refresh":
-		res, err := lclient.GetClean(ctx, &pb.GetCleanRequest{})
+		res, err := lclient.GetClean(ctx, &pb.GetCleanRequest{IncludeSeen: true})
 		if err != nil {
 			log.Fatalf("Error on Get Clean: %v (%v)", err, res)
 		}

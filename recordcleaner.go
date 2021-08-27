@@ -75,6 +75,9 @@ func (s *Server) loadConfig(ctx context.Context) (*pb.Config, error) {
 	if err != nil {
 		return nil, err
 	}
+	if config.GetLastCleanTime() == nil {
+		config.LastCleanTime = make(map[int32]int64)
+	}
 
 	s.metrics(config)
 

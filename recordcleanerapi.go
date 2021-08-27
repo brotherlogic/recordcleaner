@@ -107,7 +107,7 @@ func (s *Server) Service(ctx context.Context, req *pb.ServiceRequest) (*pb.Servi
 	return &pb.ServiceResponse{}, s.saveConfig(ctx, config)
 }
 
-func (s *Server) GetClean(ctx context.Context, _ *pb.GetCleanRequest) (*pb.GetCleanResponse, error) {
+func (s *Server) GetClean(ctx context.Context, req *pb.GetCleanRequest) (*pb.GetCleanResponse, error) {
 
 	config, err := s.loadConfig(ctx)
 	if err != nil {
@@ -163,7 +163,7 @@ func (s *Server) GetClean(ctx context.Context, _ *pb.GetCleanRequest) (*pb.GetCl
 		sids = append(sids, id)
 	}
 
-	if len(ids.GetInstanceIds()) == 0 {
+	if !req.GetIncludeSeen() && len(ids.GetInstanceIds()) == 0 {
 		return nil, status.Errorf(codes.ResourceExhausted, "Nothing to clean")
 	}
 

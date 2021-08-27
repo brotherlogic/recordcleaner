@@ -63,7 +63,7 @@ func main() {
 	case "refresh":
 		res, err := lclient.GetClean(ctx, &pb.GetCleanRequest{})
 		if err != nil {
-			log.Fatalf("Error on Get Clean: %v", err)
+			log.Fatalf("Error on Get Clean: %v (%v)", err, res)
 		}
 		for _, id := range res.GetSeen() {
 			res, err := client.ClientUpdate(ctx, &pbrc.ClientUpdateRequest{InstanceId: int32(id)})

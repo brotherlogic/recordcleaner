@@ -16,6 +16,7 @@ message Config {
 }
 
 message GetCleanRequest {
+  bool include_seen = 1;
 }
 
 message GetCleanResponse {

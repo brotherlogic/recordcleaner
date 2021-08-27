@@ -48,7 +48,15 @@ func (s *Server) ClientUpdate(ctx context.Context, in *rcpb.ClientUpdateRequest)
 			return nil, err
 		}
 
-		if rec.GetMetadata().GetLastCleanDate() != ld {
+		if rec.GetMetadata().GetFiledUnder() != rcpb.ReleaseMetadata_FILE_12_INCH || rec.GetMetadata().GetFiledUnder() != rcpb.ReleaseMetadata_FILE_7_INCH {
+			delete(config.LastCleanTime, in.GetInstanceId())
+
+			err = s.saveConfig(ctx, config)
+			if err != nil {
+				return nil, err
+			}
+
+		} else if rec.GetMetadata().GetLastCleanDate() != ld {
 			config, err := s.newClean(ctx, rec)
 			if err != nil {
 				return nil, err

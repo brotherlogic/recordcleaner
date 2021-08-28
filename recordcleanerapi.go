@@ -61,6 +61,7 @@ func (s *Server) ClientUpdate(ctx context.Context, in *rcpb.ClientUpdateRequest)
 			rec.GetMetadata().GetFiledUnder() != rcpb.ReleaseMetadata_FILE_12_INCH &&
 			rec.GetMetadata().GetFiledUnder() != rcpb.ReleaseMetadata_FILE_7_INCH) ||
 			rec.GetMetadata().GetCategory() == rcpb.ReleaseMetadata_SOLD_ARCHIVE {
+			s.Log(fmt.Sprintf("REMOVING %v", in.GetInstanceId()))
 			delete(config.LastCleanTime, in.GetInstanceId())
 
 			err = s.saveConfig(ctx, config)
@@ -69,6 +70,7 @@ func (s *Server) ClientUpdate(ctx context.Context, in *rcpb.ClientUpdateRequest)
 			}
 
 		} else if rec.GetMetadata().GetLastCleanDate() != ld {
+			s.Log(fmt.Sprintf("CHECKING %v", in.GetInstanceId()))
 			config, err := s.newClean(ctx, rec)
 			if err != nil {
 				return nil, err
@@ -89,6 +91,7 @@ func (s *Server) ClientUpdate(ctx context.Context, in *rcpb.ClientUpdateRequest)
 			}
 		}
 	} else {
+		s.Log(fmt.Sprintf("REFRESHING %v", in.GetInstanceId()))
 		rec, err := s.getRecord(ctx, in.GetInstanceId())
 		if err != nil {
 			return nil, err

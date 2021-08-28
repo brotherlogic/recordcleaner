@@ -70,7 +70,7 @@ func (s *Server) ClientUpdate(ctx context.Context, in *rcpb.ClientUpdateRequest)
 			}
 
 		} else if rec.GetMetadata().GetLastCleanDate() != ld {
-			s.Log(fmt.Sprintf("CHECKING %v", in.GetInstanceId()))
+			s.Log(fmt.Sprintf("CHECKING THIS %v", in.GetInstanceId()))
 			config, err := s.newClean(ctx, rec)
 			if err != nil {
 				return nil, err

@@ -98,7 +98,8 @@ func (s *Server) ClientUpdate(ctx context.Context, in *rcpb.ClientUpdateRequest)
 		}
 
 		_, err = s.newClean(ctx, rec)
-		if err != nil {
+		// Invalid argument signals that we don't want to process this record
+		if err != nil && status.Convert(err).Code() != codes.InvalidArgument {
 			return nil, err
 		}
 	}

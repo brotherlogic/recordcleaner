@@ -4,6 +4,8 @@ import (
 	pb "github.com/brotherlogic/recordcleaner/proto"
 	rcpb "github.com/brotherlogic/recordcollection/proto"
 	"golang.org/x/net/context"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 )
 
 func (s *Server) metrics(config *pb.Config) {
@@ -25,6 +27,13 @@ func (s *Server) metrics(config *pb.Config) {
 }
 
 func (s *Server) newClean(ctx context.Context, rec *rcpb.Record) (*pb.Config, error) {
+	if (rec.GetMetadata().GetFiledUnder() != rcpb.ReleaseMetadata_FILE_UNKNOWN &&
+		rec.GetMetadata().GetFiledUnder() != rcpb.ReleaseMetadata_FILE_12_INCH &&
+		rec.GetMetadata().GetFiledUnder() != rcpb.ReleaseMetadata_FILE_7_INCH) ||
+		rec.GetMetadata().GetCategory() == rcpb.ReleaseMetadata_SOLD_ARCHIVE {
+		return nil, status.Errorf(codes.InvalidArgument, "not processable")
+	}
+
 	//Run this under a lock
 	key, err := s.RunLockingElection(ctx, "recordcleaner")
 	if err != nil {

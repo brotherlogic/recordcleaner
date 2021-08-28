@@ -69,6 +69,25 @@ func main() {
 			res, err := client.ClientUpdate(ctx, &pbrc.ClientUpdateRequest{InstanceId: int32(id)})
 			fmt.Printf("Refresh %v and %v\n", res, err)
 		}
+	case "examine":
+		res, err := lclient.GetClean(ctx, &pb.GetCleanRequest{IncludeSeen: true})
+		if err != nil {
+			log.Fatalf("Error on Get Clean: %v (%v)", err, res)
+		}
+		for _, id := range res.GetSeen() {
+			conn2, err2 := utils.LFDialServer(ctx, "recordcollection")
+			if err2 != nil {
+				log.Fatalf("%v", err)
+			}
+			rclient := pbrc.NewRecordCollectionServiceClient(conn2)
+			rec, err := rclient.GetRecord(ctx, &pbrc.GetRecordRequest{InstanceId: id})
+			if err != nil {
+				log.Fatalf("%v", err)
+			}
+			if rec.GetRecord().GetMetadata().GetLastCleanDate() == 0 {
+				log.Printf("%v", id)
+			}
+		}
 	case "water":
 		res, err := lclient.Service(ctx, &pb.ServiceRequest{Water: true})
 		fmt.Printf("Watered: %v and %v\n", res, err)

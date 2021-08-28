@@ -57,7 +57,10 @@ func (s *Server) ClientUpdate(ctx context.Context, in *rcpb.ClientUpdateRequest)
 			s.Log(fmt.Sprintf("UNCLEAN %v", in.GetInstanceId()))
 		}
 
-		if rec.GetMetadata().GetFiledUnder() != rcpb.ReleaseMetadata_FILE_12_INCH && rec.GetMetadata().GetFiledUnder() != rcpb.ReleaseMetadata_FILE_7_INCH {
+		if (rec.GetMetadata().GetFiledUnder() != rcpb.ReleaseMetadata_FILE_UNKNOWN &&
+			rec.GetMetadata().GetFiledUnder() != rcpb.ReleaseMetadata_FILE_12_INCH &&
+			rec.GetMetadata().GetFiledUnder() != rcpb.ReleaseMetadata_FILE_7_INCH) ||
+			rec.GetMetadata().GetCategory() == rcpb.ReleaseMetadata_SOLD_ARCHIVE {
 			delete(config.LastCleanTime, in.GetInstanceId())
 
 			err = s.saveConfig(ctx, config)

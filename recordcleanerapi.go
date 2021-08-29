@@ -38,6 +38,10 @@ func (s *Server) ClientUpdate(ctx context.Context, in *rcpb.ClientUpdateRequest)
 		config.LastCleanTime = make(map[int32]int64)
 	}
 
+	if config.GetCurrentBoxPick() == in.GetInstanceId() {
+		config.CurrentBoxPick = 0
+	}
+
 	if ld, ok := config.GetLastCleanTime()[in.GetInstanceId()]; ok {
 		rec, err := s.getRecord(ctx, in.GetInstanceId())
 		if err != nil {
@@ -47,10 +51,6 @@ func (s *Server) ClientUpdate(ctx context.Context, in *rcpb.ClientUpdateRequest)
 			}
 
 			return nil, err
-		}
-
-		if config.GetCurrentBoxPick() == in.GetInstanceId() {
-			config.CurrentBoxPick = 0
 		}
 
 		if ld == 0 {
@@ -92,6 +92,7 @@ func (s *Server) ClientUpdate(ctx context.Context, in *rcpb.ClientUpdateRequest)
 		}
 	} else {
 		s.Log(fmt.Sprintf("REFRESHING %v", in.GetInstanceId()))
+
 		rec, err := s.getRecord(ctx, in.GetInstanceId())
 		if err != nil {
 			return nil, err

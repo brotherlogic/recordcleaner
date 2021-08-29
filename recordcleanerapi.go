@@ -39,7 +39,10 @@ func (s *Server) ClientUpdate(ctx context.Context, in *rcpb.ClientUpdateRequest)
 	}
 
 	if config.GetCurrentBoxPick() == in.GetInstanceId() {
+		s.Log(fmt.Sprintf("Removing boxed pick"))
 		config.CurrentBoxPick = 0
+	} else {
+		s.Log(fmt.Sprintf("Not removed boxed pick (%v)", config.GetCurrentBoxPick()))
 	}
 
 	if ld, ok := config.GetLastCleanTime()[in.GetInstanceId()]; ok {

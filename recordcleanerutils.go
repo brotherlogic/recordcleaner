@@ -48,6 +48,7 @@ func (s *Server) newClean(ctx context.Context, rec *rcpb.Record) (*pb.Config, er
 	}
 
 	config.CurrentCount++
+	config.DayCount++
 	config.GetLastCleanTime()[rec.GetRelease().GetInstanceId()] = rec.GetMetadata().GetLastCleanDate()
 
 	s.metrics(config)

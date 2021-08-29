@@ -107,6 +107,7 @@ func (s *Server) ClientUpdate(ctx context.Context, in *rcpb.ClientUpdateRequest)
 
 		_, err = s.newClean(ctx, rec)
 		s.Log(fmt.Sprintf("New Clean res: (%v) ->  %v", in.GetInstanceId(), err))
+
 		// Invalid argument signals that we don't want to process this record
 		if err != nil && status.Convert(err).Code() != codes.InvalidArgument {
 			return nil, err

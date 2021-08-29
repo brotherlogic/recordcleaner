@@ -41,6 +41,10 @@ func (s *Server) ClientUpdate(ctx context.Context, in *rcpb.ClientUpdateRequest)
 	if config.GetCurrentBoxPick() == in.GetInstanceId() {
 		s.Log(fmt.Sprintf("Removing boxed pick"))
 		config.CurrentBoxPick = 0
+		err := s.saveConfig(ctx, config)
+		if err != nil {
+			return nil, err
+		}
 	} else {
 		s.Log(fmt.Sprintf("Not removed boxed pick (%v)", config.GetCurrentBoxPick()))
 	}

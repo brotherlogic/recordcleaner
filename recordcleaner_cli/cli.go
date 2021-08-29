@@ -59,7 +59,7 @@ func main() {
 		if err != nil {
 			log.Fatalf("Cannot get record: %v", err)
 		}
-		fmt.Printf("[%v/%v] %v\n", rec.GetRecord().GetRelease().GetInstanceId(), rec.GetRecord().GetRelease().GetId(), rec.GetRecord().GetRelease().GetTitle())
+		fmt.Printf("[%v / %v] %v\n", rec.GetRecord().GetRelease().GetInstanceId(), rec.GetRecord().GetRelease().GetId(), rec.GetRecord().GetRelease().GetTitle())
 	case "refresh":
 		res, err := lclient.GetClean(ctx, &pb.GetCleanRequest{IncludeSeen: true})
 		if err != nil {

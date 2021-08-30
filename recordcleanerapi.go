@@ -142,12 +142,16 @@ func (s *Server) GetClean(ctx context.Context, req *pb.GetCleanRequest) (*pb.Get
 
 	waterCount := 0
 	filterCount := 0
+	yearDayCount := 0
 	for _, date := range config.GetLastCleanTime() {
 		if date > int64(config.GetLastWater()) {
 			waterCount++
 		}
 		if date > int64(config.GetLastFilter()) {
 			filterCount++
+		}
+		if time.Unix(date, 0).YearDay() == time.Now().YearDay() && time.Unix(date, 0).Year() == time.Now().Year() {
+			yearDayCount++
 		}
 	}
 	water.Set(float64(waterCount))
@@ -161,10 +165,8 @@ func (s *Server) GetClean(ctx context.Context, req *pb.GetCleanRequest) (*pb.Get
 		return nil, status.Errorf(codes.FailedPrecondition, "You need to change the filter, it was last done on %v", time.Unix(config.GetLastFilter(), 0))
 	}
 
-	if int32(time.Now().YearDay()) == config.GetDayOfYear() {
-		if config.GetDayCount() >= 10 {
-			return nil, status.Errorf(codes.FailedPrecondition, "you've cleaned %v records today, that's plenty", config.GetDayCount())
-		}
+	if yearDayCount >= 10 {
+		return nil, status.Errorf(codes.FailedPrecondition, "you've cleaned %v records today, that's plenty", config.GetDayCount())
 	}
 
 	conn, err := s.FDialServer(ctx, "recordcollection")

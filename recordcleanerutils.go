@@ -1,6 +1,8 @@
 package main
 
 import (
+	"time"
+
 	pb "github.com/brotherlogic/recordcleaner/proto"
 	rcpb "github.com/brotherlogic/recordcollection/proto"
 	"golang.org/x/net/context"
@@ -15,15 +17,19 @@ func (s *Server) metrics(config *pb.Config) {
 
 	total := len(config.GetLastCleanTime())
 	done := 0
-	for _, val := range config.GetLastCleanTime() {
-		if val > 0 {
+	today := 0
+	for _, date := range config.GetLastCleanTime() {
+		if date > 0 {
 			done++
+		}
+		if time.Unix(date, 0).YearDay() == time.Now().YearDay() && time.Unix(date, 0).Year() == time.Now().Year() {
+			today++
 		}
 	}
 
 	tracked.Set(float64(total))
 	cleaned.Set(float64(done))
-	cleanedToday.Set(float64(config.GetDayCount()))
+	cleanedToday.Set(float64(today))
 }
 
 func (s *Server) newClean(ctx context.Context, rec *rcpb.Record) (*pb.Config, error) {

@@ -207,7 +207,7 @@ func (s *Server) GetClean(ctx context.Context, req *pb.GetCleanRequest) (*pb.Get
 				if err != nil {
 					return nil, err
 				}
-				if rec.Record.GetMetadata().GetLastCleanDate() > 0 {
+				if rec.Record.GetMetadata().GetLastCleanDate() == 0 {
 					valids = append(valids, id)
 				}
 			}

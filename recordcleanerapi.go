@@ -25,6 +25,10 @@ var (
 		Name: "recordcleaner_filter",
 		Help: "The size of the print queue",
 	})
+	togo = promauto.NewGauge(prometheus.GaugeOpts{
+		Name: "recordcleaner_togo",
+		Help: "The size of the print queue",
+	})
 )
 
 //ClientUpdate forces a move
@@ -197,11 +201,23 @@ func (s *Server) GetClean(ctx context.Context, req *pb.GetCleanRequest) (*pb.Get
 				return nil, err
 			}
 
-			if len(ids.GetInstanceIds()) == 0 {
+			var valids []int32
+			for _, id := range ids.GetInstanceIds() {
+				rec, err := client.GetRecord(ctx, &rcpb.GetRecordRequest{InstanceId: id})
+				if err != nil {
+					return nil, err
+				}
+				if rec.Record.GetMetadata().GetLastCleanDate() > 0 {
+					valids = append(valids, id)
+				}
+			}
+			if len(valids) == 0 {
 				return nil, status.Errorf(codes.ResourceExhausted, "Nothing to clean")
 			}
 
-			config.CurrentBoxPick = ids.GetInstanceIds()[rand.Intn(len(ids.GetInstanceIds()))]
+			togo.Set(float64(len(valids)))
+
+			config.CurrentBoxPick = valids[rand.Intn(len(valids))]
 			err = s.saveConfig(ctx, config)
 			if err != nil {
 				return nil, err

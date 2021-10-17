@@ -42,17 +42,6 @@ func (s *Server) ClientUpdate(ctx context.Context, in *rcpb.ClientUpdateRequest)
 		return nil, err
 	}
 
-	defer func() {
-		cleanedLastSeven := 0
-		for _, date := range config.GetLastCleanTime() {
-			if time.Since(time.Unix(date, 0)) < time.Hour*24*7 {
-				cleanedLastSeven++
-			}
-		}
-
-		cleanedPerDay.Set(float64(cleanedLastSeven) / 7.0)
-	}()
-
 	if config.GetLastCleanTime() == nil {
 		config.LastCleanTime = make(map[int32]int64)
 	}

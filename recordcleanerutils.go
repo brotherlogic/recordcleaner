@@ -30,6 +30,15 @@ func (s *Server) metrics(config *pb.Config) {
 	tracked.Set(float64(total))
 	cleaned.Set(float64(done))
 	cleanedToday.Set(float64(today))
+
+	cleanedLastSeven := 0
+	for _, date := range config.GetLastCleanTime() {
+		if time.Since(time.Unix(date, 0)) < time.Hour*24*7 {
+			cleanedLastSeven++
+		}
+	}
+
+	cleanedPerDay.Set(float64(cleanedLastSeven) / 7.0)
 }
 
 func (s *Server) newClean(ctx context.Context, rec *rcpb.Record) (*pb.Config, error) {

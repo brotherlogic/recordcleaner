@@ -171,6 +171,7 @@ func main() {
 	// Fill the mtrics out before starting
 	ctx, cancel := utils.ManualContext("recordcleaner-startup", time.Minute)
 	server.loadConfig(ctx)
+	server.triggerMetrics(ctx)
 	cancel()
 
 	fmt.Printf("%v", server.Serve())

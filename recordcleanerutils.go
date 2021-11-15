@@ -10,6 +10,10 @@ import (
 	"google.golang.org/grpc/status"
 )
 
+const (
+	TOGO_FOLDER = 3282985
+)
+
 func (s *Server) metrics(config *pb.Config) {
 	if config.GetLastCleanTime() == nil {
 		return
@@ -39,6 +43,35 @@ func (s *Server) metrics(config *pb.Config) {
 	}
 
 	cleanedPerDay.Set(float64(cleanedLastSeven) / 7.0)
+}
+
+func (s *Server) triggerMetrics(ctx context.Context) error {
+	conn, err := s.FDialServer(ctx, "recordcollection")
+	if err != nil {
+		return err
+	}
+	defer conn.Close()
+
+	client := rcpb.NewRecordCollectionServiceClient(conn)
+
+	ids, err := client.QueryRecords(ctx, &rcpb.QueryRecordsRequest{Query: &rcpb.QueryRecordsRequest_FolderId{int32(TOGO_FOLDER)}})
+	if err != nil {
+		return err
+	}
+
+	var valids []int32
+	for _, id := range ids.GetInstanceIds() {
+		rec, err := client.GetRecord(ctx, &rcpb.GetRecordRequest{InstanceId: id})
+		if err != nil {
+			return err
+		}
+		if rec.Record.GetMetadata().GetLastCleanDate() == 0 && rec.GetRecord().Metadata.GetGoalFolder() != 1782105 {
+			valids = append(valids, id)
+		}
+	}
+
+	togo.Set(float64(len(valids)))
+	return nil
 }
 
 func (s *Server) newClean(ctx context.Context, rec *rcpb.Record) (*pb.Config, error) {

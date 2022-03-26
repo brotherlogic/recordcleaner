@@ -19,7 +19,7 @@ func init() {
 }
 
 func main() {
-	ctx, cancel := utils.ManualContext("recordcleaner-cli", time.Hour)
+	ctx, cancel := utils.ManualContext("recordcleaner-cli", time.Minute)
 	defer cancel()
 
 	conn, err := utils.LFDialServer(ctx, "recordcleaner")

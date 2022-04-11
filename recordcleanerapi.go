@@ -176,10 +176,6 @@ func (s *Server) GetClean(ctx context.Context, req *pb.GetCleanRequest) (*pb.Get
 		return nil, status.Errorf(codes.FailedPrecondition, "You need to change the filter, it was last done on %v", time.Unix(config.GetLastFilter(), 0))
 	}
 
-	if yearDayCount >= 15 {
-		return nil, status.Errorf(codes.FailedPrecondition, "you've cleaned %v records today, that's plenty", config.GetDayCount())
-	}
-
 	conn, err := s.FDialServer(ctx, "recordcollection")
 	if err != nil {
 		return nil, err
@@ -244,6 +240,15 @@ func (s *Server) GetClean(ctx context.Context, req *pb.GetCleanRequest) (*pb.Get
 
 	if len(ids.GetInstanceIds()) == 0 {
 		return &pb.GetCleanResponse{Seen: sids}, nil
+	}
+
+	chosen := ids.GetInstanceIds()[0]
+	rec, err := client.GetRecord(ctx, &rcpb.GetRecordRequest{InstanceId: chosen})
+	if err != nil {
+		return nil, err
+	}
+	if rec.GetRecord().GetMetadata().GetCategory() != rcpb.ReleaseMetadata_ARRIVED && yearDayCount >= 5 {
+		return nil, status.Errorf(codes.FailedPrecondition, "you've cleaned %v records today, that's plenty", config.GetDayCount())
 	}
 
 	return &pb.GetCleanResponse{InstanceId: ids.GetInstanceIds()[0], Seen: sids}, nil

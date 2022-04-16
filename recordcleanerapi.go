@@ -25,6 +25,10 @@ var (
 		Name: "recordcleaner_filter",
 		Help: "The size of the print queue",
 	})
+	day = promauto.NewGauge(prometheus.GaugeOpts{
+		Name: "recordcleaner_day",
+		Help: "The size of the print queue",
+	})
 	togo = promauto.NewGauge(prometheus.GaugeOpts{
 		Name: "recordcleaner_togo",
 		Help: "The size of the print queue",
@@ -167,6 +171,7 @@ func (s *Server) GetClean(ctx context.Context, req *pb.GetCleanRequest) (*pb.Get
 	}
 	water.Set(float64(waterCount))
 	filter.Set(float64(filterCount))
+	day.Set(float64(yearDayCount))
 
 	if waterCount >= 30 {
 		return nil, status.Errorf(codes.FailedPrecondition, "You need to change the water, it was last done on %v", time.Unix(config.GetLastWater(), 0))

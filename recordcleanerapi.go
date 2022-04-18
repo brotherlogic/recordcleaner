@@ -206,6 +206,11 @@ func (s *Server) GetClean(ctx context.Context, req *pb.GetCleanRequest) (*pb.Get
 
 	if !req.GetIncludeSeen() && len(ids.GetInstanceIds()) == 0 {
 
+		// Don't send box picks at all
+		if time.Now().Hour() < 16 {
+			return nil, status.Errorf(codes.ResourceExhausted, "Nothing to clean currently")
+		}
+
 		if config.GetCurrentBoxPick() == 0 {
 			ids, err := client.QueryRecords(ctx, &rcpb.QueryRecordsRequest{Query: &rcpb.QueryRecordsRequest_FolderId{int32(TOGO_FOLDER)}})
 			if err != nil {

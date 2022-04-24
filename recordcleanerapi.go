@@ -211,10 +211,6 @@ func (s *Server) GetClean(ctx context.Context, req *pb.GetCleanRequest) (*pb.Get
 			return nil, status.Errorf(codes.ResourceExhausted, "Nothing to clean currently")
 		}
 
-		if yearDayCount >= 5 {
-			return nil, status.Errorf(codes.FailedPrecondition, "you've cleaned %v records today, that's plenty", config.GetDayCount())
-		}
-
 		if config.GetCurrentBoxPick() == 0 {
 			ids, err := client.QueryRecords(ctx, &rcpb.QueryRecordsRequest{Query: &rcpb.QueryRecordsRequest_FolderId{int32(TOGO_FOLDER)}})
 			if err != nil {
@@ -242,6 +238,15 @@ func (s *Server) GetClean(ctx context.Context, req *pb.GetCleanRequest) (*pb.Get
 			if err != nil {
 				return nil, err
 			}
+		}
+
+		record, err := s.getRecord(ctx, config.CurrentBoxPick)
+		if err != nil {
+			return nil, err
+		}
+
+		if record.GetMetadata().GetCategory() != rcpb.ReleaseMetadata_PRE_VALIDATE && yearDayCount >= 5 {
+			return nil, status.Errorf(codes.FailedPrecondition, "you've cleaned %v records today, that's plenty", config.GetDayCount())
 		}
 
 		return &pb.GetCleanResponse{InstanceId: config.CurrentBoxPick, Seen: sids}, nil

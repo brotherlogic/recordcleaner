@@ -245,7 +245,9 @@ func (s *Server) GetClean(ctx context.Context, req *pb.GetCleanRequest) (*pb.Get
 			return nil, err
 		}
 
-		if record.GetMetadata().GetCategory() != rcpb.ReleaseMetadata_PRE_VALIDATE && yearDayCount >= 5 {
+		if record.GetMetadata().GetCategory() != rcpb.ReleaseMetadata_PRE_VALIDATE &&
+			record.GetMetadata().GetCategory() != rcpb.ReleaseMetadata_ARRIVED &&
+			yearDayCount >= 5 {
 			return nil, status.Errorf(codes.FailedPrecondition, "you've cleaned %v records today, that is plenty", config.GetDayCount())
 		}
 
@@ -262,7 +264,9 @@ func (s *Server) GetClean(ctx context.Context, req *pb.GetCleanRequest) (*pb.Get
 		return nil, err
 	}
 	s.CtxLog(ctx, fmt.Sprintf("Failing %v and %v", rec.GetRecord().GetMetadata().GetCategory(), yearDayCount))
-	if rec.GetRecord().GetMetadata().GetCategory() != rcpb.ReleaseMetadata_PRE_VALIDATE && yearDayCount >= 5 {
+	if rec.GetRecord().GetMetadata().GetCategory() != rcpb.ReleaseMetadata_PRE_VALIDATE &&
+		rec.GetRecord().GetMetadata().GetCategory() != rcpb.ReleaseMetadata_ARRIVED &&
+		yearDayCount >= 5 {
 		return nil, status.Errorf(codes.FailedPrecondition, "you've cleaned %v records today, that be plenty", config.GetDayCount())
 	}
 

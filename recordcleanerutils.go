@@ -83,7 +83,7 @@ func (s *Server) newClean(ctx context.Context, rec *rcpb.Record) (*pb.Config, er
 	}
 
 	//Run this under a lock
-	key, err := s.RunLockingElection(ctx, "recordcleaner")
+	key, err := s.RunLockingElection(ctx, "recordcleaner", "Locking for Record Cleaners")
 	if err != nil {
 		return nil, err
 	}

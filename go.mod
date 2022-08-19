@@ -3,9 +3,8 @@ module github.com/brotherlogic/recordcleaner
 go 1.16
 
 require (
-	github.com/brotherlogic/buildserver v0.0.0-20220817193816-243c3907fe6c // indirect
-	github.com/brotherlogic/dstore v0.0.0-20220810203507-7b44971af4dc
-	github.com/brotherlogic/goserver v0.0.0-20220816234214-c6c7562bbbc3
+	github.com/brotherlogic/dstore v0.0.0-20220819183548-a27ad13a7ab2
+	github.com/brotherlogic/goserver v0.0.0-20220819181159-c728a3f047e7
 	github.com/brotherlogic/recordcollection v0.0.0-20220817005343-2e25fedcd740
 	github.com/golang/protobuf v1.5.2
 	github.com/prometheus/client_golang v1.13.0

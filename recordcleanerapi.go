@@ -207,7 +207,7 @@ func (s *Server) GetClean(ctx context.Context, req *pb.GetCleanRequest) (*pb.Get
 	if !req.GetIncludeSeen() && len(ids.GetInstanceIds()) == 0 {
 
 		// Don't send box picks at all
-		if time.Now().Hour() < 16 {
+		if time.Now().Hour() < 16 && time.Now().Weekday() != time.Saturday && time.Now().Weekday() != time.Sunday {
 			return nil, status.Errorf(codes.ResourceExhausted, "Nothing to clean currently")
 		}
 

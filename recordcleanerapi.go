@@ -51,14 +51,14 @@ func (s *Server) ClientUpdate(ctx context.Context, in *rcpb.ClientUpdateRequest)
 	}
 
 	if config.GetCurrentBoxPick() == in.GetInstanceId() {
-		s.Log(fmt.Sprintf("Removing boxed pick"))
+		s.CtxLog(ctx, fmt.Sprintf("Removing boxed pick"))
 		config.CurrentBoxPick = 0
 		err := s.saveConfig(ctx, config)
 		if err != nil {
 			return nil, err
 		}
 	} else {
-		s.Log(fmt.Sprintf("Not removed boxed pick (%v)", config.GetCurrentBoxPick()))
+		s.CtxLog(ctx, fmt.Sprintf("Not removed boxed pick (%v)", config.GetCurrentBoxPick()))
 	}
 
 	if ld, ok := config.GetLastCleanTime()[in.GetInstanceId()]; ok {
@@ -73,14 +73,14 @@ func (s *Server) ClientUpdate(ctx context.Context, in *rcpb.ClientUpdateRequest)
 		}
 
 		if ld == 0 {
-			s.Log(fmt.Sprintf("UNCLEAN %v", in.GetInstanceId()))
+			s.CtxLog(ctx, fmt.Sprintf("UNCLEAN %v", in.GetInstanceId()))
 		}
 
 		if (rec.GetMetadata().GetFiledUnder() != rcpb.ReleaseMetadata_FILE_UNKNOWN &&
 			rec.GetMetadata().GetFiledUnder() != rcpb.ReleaseMetadata_FILE_12_INCH &&
 			rec.GetMetadata().GetFiledUnder() != rcpb.ReleaseMetadata_FILE_7_INCH) ||
 			rec.GetMetadata().GetCategory() == rcpb.ReleaseMetadata_SOLD_ARCHIVE {
-			s.Log(fmt.Sprintf("REMOVING %v", in.GetInstanceId()))
+			s.CtxLog(ctx, fmt.Sprintf("REMOVING %v", in.GetInstanceId()))
 			delete(config.LastCleanTime, in.GetInstanceId())
 
 			err = s.saveConfig(ctx, config)
@@ -89,7 +89,7 @@ func (s *Server) ClientUpdate(ctx context.Context, in *rcpb.ClientUpdateRequest)
 			}
 
 		} else if rec.GetMetadata().GetLastCleanDate() != ld {
-			s.Log(fmt.Sprintf("CHECKING THIS %v", in.GetInstanceId()))
+			s.CtxLog(ctx, fmt.Sprintf("CHECKING THIS %v", in.GetInstanceId()))
 			config, err := s.newClean(ctx, rec)
 			if err != nil {
 				return nil, err
@@ -102,7 +102,7 @@ func (s *Server) ClientUpdate(ctx context.Context, in *rcpb.ClientUpdateRequest)
 				config.DayOfYear = int32(time.Now().YearDay())
 			}
 
-			s.Log(fmt.Sprintf("Day clean %v and %v and %v from %v (since %v and %v) => %v", config.DayCount, config.DayOfYear, time.Now().YearDay(), in.GetInstanceId(), rec.GetMetadata().GetLastCleanDate(), ld, config.GetLastCleanTime()[in.GetInstanceId()]))
+			s.CtxLog(ctx, fmt.Sprintf("Day clean %v and %v and %v from %v (since %v and %v) => %v", config.DayCount, config.DayOfYear, time.Now().YearDay(), in.GetInstanceId(), rec.GetMetadata().GetLastCleanDate(), ld, config.GetLastCleanTime()[in.GetInstanceId()]))
 
 			err = s.saveConfig(ctx, config)
 			if err != nil {
@@ -110,7 +110,7 @@ func (s *Server) ClientUpdate(ctx context.Context, in *rcpb.ClientUpdateRequest)
 			}
 		}
 	} else {
-		s.Log(fmt.Sprintf("REFRESHING %v", in.GetInstanceId()))
+		s.CtxLog(ctx, fmt.Sprintf("REFRESHING %v", in.GetInstanceId()))
 
 		rec, err := s.getRecord(ctx, in.GetInstanceId())
 		if err != nil {
@@ -121,7 +121,7 @@ func (s *Server) ClientUpdate(ctx context.Context, in *rcpb.ClientUpdateRequest)
 		}
 
 		_, err = s.newClean(ctx, rec)
-		s.Log(fmt.Sprintf("New Clean res: (%v) ->  %v", in.GetInstanceId(), err))
+		s.CtxLog(ctx, fmt.Sprintf("New Clean res: (%v) ->  %v", in.GetInstanceId(), err))
 
 		// Invalid argument signals that we don't want to process this record
 		if err != nil && status.Convert(err).Code() != codes.InvalidArgument {

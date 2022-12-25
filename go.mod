@@ -5,8 +5,8 @@ go 1.16
 require (
 	github.com/brotherlogic/dstore v0.0.0-20221218055338-99a21b17382c
 	github.com/brotherlogic/goserver v0.0.0-20221217002224-0ba5c0213be1
-	github.com/brotherlogic/logging v0.0.0-20221225052913-076942c9779b // indirect
-	github.com/brotherlogic/recordcollection v0.0.0-20221225052620-02963d8b8139
+	github.com/brotherlogic/lock v0.0.0-20221225053643-e6fbf2d9b812 // indirect
+	github.com/brotherlogic/recordcollection v0.0.0-20221225053318-3d8218536fbb
 	github.com/golang/protobuf v1.5.2
 	github.com/prometheus/client_golang v1.14.0
 	golang.org/x/net v0.4.0

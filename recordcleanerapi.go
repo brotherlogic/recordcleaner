@@ -240,10 +240,17 @@ func (s *Server) GetClean(ctx context.Context, req *pb.GetCleanRequest) (*pb.Get
 			}
 		}
 
-		if time.Now().Weekday() != time.Saturday && time.Now().Weekday() != time.Sunday && yearDayCount > 1 {
-			return nil, status.Errorf(codes.FailedPrecondition, "you've cleaned %v records today, that is plenty", config.GetDayCount())
-		} else if yearDayCount > 1 {
-			return nil, status.Errorf(codes.FailedPrecondition, "you've cleaned %v records today, that is plenty", config.GetDayCount())
+		rec, err := client.GetRecord(ctx, &rcpb.GetRecordRequest{InstanceId: config.CurrentBoxPick})
+		if err != nil {
+			return nil, err
+		}
+
+		if rec.GetRecord().GetMetadata().GetCategory() != rcpb.ReleaseMetadata_PRE_VALIDATE {
+			if time.Now().Weekday() != time.Saturday && time.Now().Weekday() != time.Sunday && yearDayCount > 1 {
+				return nil, status.Errorf(codes.FailedPrecondition, "you've cleaned %v records today, that is plenty", config.GetDayCount())
+			} else if yearDayCount > 1 {
+				return nil, status.Errorf(codes.FailedPrecondition, "you've cleaned %v records today, that is plenty", config.GetDayCount())
+			}
 		}
 
 		return &pb.GetCleanResponse{InstanceId: config.CurrentBoxPick, Seen: sids}, nil
@@ -259,7 +266,8 @@ func (s *Server) GetClean(ctx context.Context, req *pb.GetCleanRequest) (*pb.Get
 		return nil, err
 	}
 	s.CtxLog(ctx, fmt.Sprintf("Failing %v and %v", rec.GetRecord().GetMetadata().GetCategory(), yearDayCount))
-	if yearDayCount > 1 {
+	if rec.GetRecord().GetMetadata().GetCategory() != rcpb.ReleaseMetadata_PRE_VALIDATE &&
+		yearDayCount >= 1 {
 		return nil, status.Errorf(codes.FailedPrecondition, "you've cleaned %v records today, that be plenty", config.GetDayCount())
 	}
 

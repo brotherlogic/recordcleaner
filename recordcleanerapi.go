@@ -240,9 +240,9 @@ func (s *Server) GetClean(ctx context.Context, req *pb.GetCleanRequest) (*pb.Get
 			}
 		}
 
-		if time.Now().Weekday() != time.Saturday && time.Now().Weekday() != time.Sunday && yearDayCount >= 1 {
+		if time.Now().Weekday() != time.Saturday && time.Now().Weekday() != time.Sunday && yearDayCount > 1 {
 			return nil, status.Errorf(codes.FailedPrecondition, "you've cleaned %v records today, that is plenty", config.GetDayCount())
-		} else if yearDayCount >= 1 {
+		} else if yearDayCount > 1 {
 			return nil, status.Errorf(codes.FailedPrecondition, "you've cleaned %v records today, that is plenty", config.GetDayCount())
 		}
 

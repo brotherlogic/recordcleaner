@@ -240,18 +240,10 @@ func (s *Server) GetClean(ctx context.Context, req *pb.GetCleanRequest) (*pb.Get
 			}
 		}
 
-		record, err := s.getRecord(ctx, config.CurrentBoxPick)
-		if err != nil {
-			return nil, err
-		}
-
-		if record.GetMetadata().GetCategory() != rcpb.ReleaseMetadata_PRE_VALIDATE &&
-			record.GetMetadata().GetCategory() != rcpb.ReleaseMetadata_ARRIVED {
-			if time.Now().Weekday() != time.Saturday && time.Now().Weekday() != time.Sunday && yearDayCount >= 5 {
-				return nil, status.Errorf(codes.FailedPrecondition, "you've cleaned %v records today, that is plenty", config.GetDayCount())
-			} else if yearDayCount >= 10 {
-				return nil, status.Errorf(codes.FailedPrecondition, "you've cleaned %v records today, that is plenty", config.GetDayCount())
-			}
+		if time.Now().Weekday() != time.Saturday && time.Now().Weekday() != time.Sunday && yearDayCount >= 1 {
+			return nil, status.Errorf(codes.FailedPrecondition, "you've cleaned %v records today, that is plenty", config.GetDayCount())
+		} else if yearDayCount >= 1 {
+			return nil, status.Errorf(codes.FailedPrecondition, "you've cleaned %v records today, that is plenty", config.GetDayCount())
 		}
 
 		return &pb.GetCleanResponse{InstanceId: config.CurrentBoxPick, Seen: sids}, nil

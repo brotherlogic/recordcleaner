@@ -193,6 +193,10 @@ func (s *Server) GetClean(ctx context.Context, req *pb.GetCleanRequest) (*pb.Get
 		return nil, err
 	}
 
+	if len(ids.GetInstanceIds()) == 0 && req.GetOnlyEssential() {
+		return nil, status.Errorf(codes.ResourceExhausted, "Nothing to clean")
+	}
+
 	s.CtxLog(ctx, fmt.Sprintf("Queried %v -> found %v -> %v", TOGO_FOLDER, len(ids.GetInstanceIds()), ids))
 
 	sort.SliceStable(ids.InstanceIds, func(i, j int) bool {
@@ -200,7 +204,7 @@ func (s *Server) GetClean(ctx context.Context, req *pb.GetCleanRequest) (*pb.Get
 	})
 
 	var sids []int32
-	for id, _ := range config.GetLastCleanTime() {
+	for id := range config.GetLastCleanTime() {
 		sids = append(sids, id)
 	}
 

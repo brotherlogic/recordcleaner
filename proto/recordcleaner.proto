@@ -20,6 +20,7 @@ message Config {
 
 message GetCleanRequest {
   bool include_seen = 1;
+  bool only_essential = 2;
 }
 
 message GetCleanResponse {

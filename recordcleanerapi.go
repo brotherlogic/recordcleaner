@@ -193,7 +193,7 @@ func (s *Server) GetClean(ctx context.Context, req *pb.GetCleanRequest) (*pb.Get
 		return nil, err
 	}
 
-	if len(ids.GetInstanceIds()) == 0 && req.OnlyEssential {
+	if len(ids.GetInstanceIds()) == 0 && req.GetOnlyEssential() {
 		return nil, status.Errorf(codes.ResourceExhausted, "Nothing to clean")
 	}
 

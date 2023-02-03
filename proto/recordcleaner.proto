@@ -15,6 +15,7 @@ message Config {
   int32 day_count = 6;
 
   int32 current_box_pick = 7;
+  map<string, int64> day_category_count = 8;
 }
 
 message GetCleanRequest {

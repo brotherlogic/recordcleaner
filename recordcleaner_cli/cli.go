@@ -8,15 +8,10 @@ import (
 	"time"
 
 	"github.com/brotherlogic/goserver/utils"
-	"google.golang.org/grpc/resolver"
 
 	pb "github.com/brotherlogic/recordcleaner/proto"
 	pbrc "github.com/brotherlogic/recordcollection/proto"
 )
-
-func init() {
-	resolver.Register(&utils.DiscoveryClientResolverBuilder{})
-}
 
 func main() {
 	ctx, cancel := utils.ManualContext("recordcleaner-cli", time.Minute)

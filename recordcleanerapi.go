@@ -251,9 +251,9 @@ func (s *Server) GetClean(ctx context.Context, req *pb.GetCleanRequest) (*pb.Get
 
 		if rec.GetRecord().GetMetadata().GetCategory() != rcpb.ReleaseMetadata_PRE_VALIDATE {
 			if time.Now().Weekday() != time.Saturday && time.Now().Weekday() != time.Sunday && yearDayCount > 1 {
-				return nil, status.Errorf(codes.FailedPrecondition, "you've cleaned %v records today, that is plenty", yearDayCount)
+				return nil, status.Errorf(codes.ResourceExhausted, "you've cleaned %v records today, that is plenty", yearDayCount)
 			} else if yearDayCount > 1 {
-				return nil, status.Errorf(codes.FailedPrecondition, "you've cleaned %v records today, that is plenty", yearDayCount)
+				return nil, status.Errorf(codes.ResourceExhausted, "you've cleaned %v records today, that is plenty", yearDayCount)
 			}
 		}
 
@@ -272,7 +272,7 @@ func (s *Server) GetClean(ctx context.Context, req *pb.GetCleanRequest) (*pb.Get
 	s.CtxLog(ctx, fmt.Sprintf("Failing %v and %v", rec.GetRecord().GetMetadata().GetCategory(), yearDayCount))
 	if rec.GetRecord().GetMetadata().GetCategory() != rcpb.ReleaseMetadata_PRE_VALIDATE &&
 		yearDayCount >= 1 {
-		return nil, status.Errorf(codes.FailedPrecondition, "you've cleaned %v records today, that be plenty", config.GetDayCount())
+		return nil, status.Errorf(codes.ResourceExhausted, "you've cleaned %v records today, that be plenty", config.GetDayCount())
 	}
 
 	return &pb.GetCleanResponse{InstanceId: ids.GetInstanceIds()[0], Seen: sids}, nil

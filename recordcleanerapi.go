@@ -39,7 +39,7 @@ var (
 	})
 )
 
-//ClientUpdate forces a move
+// ClientUpdate forces a move
 func (s *Server) ClientUpdate(ctx context.Context, in *rcpb.ClientUpdateRequest) (*rcpb.ClientUpdateResponse, error) {
 	config, err := s.loadConfig(ctx)
 	if err != nil {
@@ -150,7 +150,7 @@ func (s *Server) Service(ctx context.Context, req *pb.ServiceRequest) (*pb.Servi
 
 func (s *Server) GetClean(ctx context.Context, req *pb.GetCleanRequest) (*pb.GetCleanResponse, error) {
 	if time.Now().Hour() < 8 {
-		return nil, status.Errorf(codes.FailedPrecondition, "No cleaning before 8am")
+		return nil, status.Errorf(codes.OutOfRange, "No cleaning before 8am")
 	}
 
 	config, err := s.loadConfig(ctx)

@@ -72,6 +72,10 @@ func (s *Server) ClientUpdate(ctx context.Context, in *rcpb.ClientUpdateRequest)
 			return nil, err
 		}
 
+		if rec.GetMetadata().GetCategory() == rcpb.ReleaseMetadata_UNLISTENED {
+			config.LastRelevantClean = time.Now().Unix()
+		}
+
 		if ld == 0 {
 			s.CtxLog(ctx, fmt.Sprintf("UNCLEAN %v", in.GetInstanceId()))
 		}

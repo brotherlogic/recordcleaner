@@ -169,6 +169,8 @@ func (s *Server) GetClean(ctx context.Context, req *pb.GetCleanRequest) (*pb.Get
 		outOfBounds = true
 	}
 
+	s.CtxLog(ctx, fmt.Sprintf("Last clean was %v, setting outOfBounds to %v", time.Unix(config.GetLastRelevantClean(), 0), outOfBounds))
+
 	waterCount := 0
 	filterCount := 0
 	yearDayCount := 0

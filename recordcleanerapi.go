@@ -169,7 +169,7 @@ func (s *Server) GetClean(ctx context.Context, req *pb.GetCleanRequest) (*pb.Get
 	// Determine if we should even be cleaning
 	outOfBounds := false
 	if (time.Now().Weekday() == time.Friday && time.Since(time.Unix(config.GetLastRelevantClean(), 0)) < time.Hour) ||
-		(time.Since(time.Unix(config.GetLastRelevantClean(), 0)) < time.Hour*24) {
+		(time.Now().Weekday() != time.Friday && time.Since(time.Unix(config.GetLastRelevantClean(), 0)) < time.Hour*24) {
 		outOfBounds = true
 	}
 

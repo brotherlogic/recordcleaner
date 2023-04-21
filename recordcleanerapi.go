@@ -162,6 +162,13 @@ func (s *Server) GetClean(ctx context.Context, req *pb.GetCleanRequest) (*pb.Get
 		return nil, err
 	}
 
+	// Determine if we should even be cleaning
+	outOfBounds := false
+	if (time.Now().Weekday() == time.Friday && time.Since(time.Unix(config.GetLastRelevantClean(), 0)) < time.Hour) ||
+		(time.Since(time.Unix(config.GetLastRelevantClean(), 0)) < time.Hour*24) {
+		outOfBounds = true
+	}
+
 	waterCount := 0
 	filterCount := 0
 	yearDayCount := 0
@@ -256,12 +263,8 @@ func (s *Server) GetClean(ctx context.Context, req *pb.GetCleanRequest) (*pb.Get
 			return nil, err
 		}
 
-		if rec.GetRecord().GetMetadata().GetCategory() != rcpb.ReleaseMetadata_PRE_VALIDATE {
-			if time.Now().Weekday() != time.Saturday && time.Now().Weekday() != time.Sunday && yearDayCount > 1 {
-				return nil, status.Errorf(codes.ResourceExhausted, "you've cleaned %v records today, that is plenty", yearDayCount)
-			} else if yearDayCount > 1 {
-				return nil, status.Errorf(codes.ResourceExhausted, "you've cleaned %v records today, that is plenty", yearDayCount)
-			}
+		if rec.GetRecord().GetMetadata().GetCategory() != rcpb.ReleaseMetadata_PRE_VALIDATE && outOfBounds {
+			return nil, status.Errorf(codes.ResourceExhausted, "you've cleaned %v records today, that is plenty", yearDayCount)
 		}
 
 		return &pb.GetCleanResponse{InstanceId: config.CurrentBoxPick, Seen: sids}, nil
@@ -278,7 +281,7 @@ func (s *Server) GetClean(ctx context.Context, req *pb.GetCleanRequest) (*pb.Get
 	}
 	s.CtxLog(ctx, fmt.Sprintf("Failing %v and %v", rec.GetRecord().GetMetadata().GetCategory(), yearDayCount))
 	if rec.GetRecord().GetMetadata().GetCategory() != rcpb.ReleaseMetadata_PRE_VALIDATE &&
-		yearDayCount >= 1 {
+		outOfBounds {
 		return nil, status.Errorf(codes.ResourceExhausted, "you've cleaned %v records today, that be plenty", config.GetDayCount())
 	}
 

@@ -248,7 +248,7 @@ func (s *Server) GetClean(ctx context.Context, req *pb.GetCleanRequest) (*pb.Get
 				if err != nil {
 					return nil, err
 				}
-				if rec.Record.GetMetadata().GetLastCleanDate() == 0 && rec.GetRecord().Metadata.GetGoalFolder() != 1782105 {
+				if rec.GetRecord().GetMetadata().GetDateArrived() > 0 && rec.Record.GetMetadata().GetLastCleanDate() == 0 && rec.GetRecord().Metadata.GetGoalFolder() != 1782105 {
 					valids = append(valids, id)
 				}
 			}
@@ -268,6 +268,11 @@ func (s *Server) GetClean(ctx context.Context, req *pb.GetCleanRequest) (*pb.Get
 		rec, err := client.GetRecord(ctx, &rcpb.GetRecordRequest{InstanceId: config.CurrentBoxPick})
 		if err != nil {
 			return nil, err
+		}
+
+		if rec.GetRecord().GetMetadata().GetDateArrived() == 0 {
+			config.CurrentBoxPick = 0
+			return nil, status.Errorf(codes.InvalidArgument, "Refreshing box pick")
 		}
 
 		if rec.GetRecord().GetMetadata().GetCategory() != rcpb.ReleaseMetadata_PRE_VALIDATE && outOfBounds {

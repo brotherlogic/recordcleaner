@@ -272,6 +272,7 @@ func (s *Server) GetClean(ctx context.Context, req *pb.GetCleanRequest) (*pb.Get
 
 		if rec.GetRecord().GetMetadata().GetDateArrived() == 0 {
 			config.CurrentBoxPick = 0
+			s.saveConfig(ctx, config)
 			return nil, status.Errorf(codes.InvalidArgument, "Refreshing box pick")
 		}
 

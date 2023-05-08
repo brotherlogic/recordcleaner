@@ -156,10 +156,11 @@ func (s *Server) GetClean(ctx context.Context, req *pb.GetCleanRequest) (*pb.Get
 	if time.Now().Hour() < 8 {
 		return nil, status.Errorf(codes.OutOfRange, "No cleaning before 8am")
 	}
-	_, err := s.FDialServer(ctx, "printer")
+	conn, err := s.FDialServer(ctx, "printer")
 	if err != nil {
 		return nil, status.Errorf(codes.Unavailable, "printer is unavailable (%v), assuming office is on shutdown", err)
 	}
+	conn.Close()
 
 	config, err := s.loadConfig(ctx)
 	if err != nil {
@@ -202,7 +203,7 @@ func (s *Server) GetClean(ctx context.Context, req *pb.GetCleanRequest) (*pb.Get
 		return nil, status.Errorf(codes.FailedPrecondition, "You need to change the filter, it was last done on %v", time.Unix(config.GetLastFilter(), 0))
 	}
 
-	conn, err := s.FDialServer(ctx, "recordcollection")
+	conn, err = s.FDialServer(ctx, "recordcollection")
 	if err != nil {
 		return nil, err
 	}

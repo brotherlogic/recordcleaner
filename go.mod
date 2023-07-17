@@ -3,7 +3,7 @@ module github.com/brotherlogic/recordcleaner
 go 1.19
 
 require (
-	github.com/brotherlogic/dstore v0.0.0-20230717175922-f1e5c0c40bd7
+	github.com/brotherlogic/dstore v0.0.0-20230717215737-e7af740587af
 	github.com/brotherlogic/goserver v0.0.0-20230619155835-969c746dba11
 	github.com/brotherlogic/recordcollection v0.0.0-20230713021439-e999e2411a13
 	github.com/golang/protobuf v1.5.3
@@ -22,7 +22,7 @@ require (
 	github.com/brotherlogic/gobuildslave v0.0.0-20230604044345-1e331dee389b // indirect
 	github.com/brotherlogic/godiscogs v0.0.0-20230530030232-e7e2f67fbe33 // indirect
 	github.com/brotherlogic/keystore v0.0.0-20230605062808-e90788956f75 // indirect
-	github.com/brotherlogic/lock v0.0.0-20230717210718-9443d93daa8a // indirect
+	github.com/brotherlogic/lock v0.0.0-20230717220301-1a3d421aac2d // indirect
 	github.com/brotherlogic/logging v0.0.0-20230711202906-2567a1a70ec6 // indirect
 	github.com/brotherlogic/monitor v0.0.0-20221025152653-c10877c5f9e6 // indirect
 	github.com/brotherlogic/versionserver v0.0.0-20221025154054-c9bcd41be2f2 // indirect

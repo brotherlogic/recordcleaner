@@ -2151,7 +2151,10 @@ github.com/brotherlogic/printer v0.0.0-20221209183447-b5f99e08906b/go.mod h1:Qx5
 github.com/brotherlogic/printer v0.0.0-20221218005812-6e96f5029592/go.mod h1:wD6MzMP7gRPJb3lFMpwLyFMrH/1yH8TUrLGgHZcPJUc=
 github.com/brotherlogic/printer v0.0.0-20221225010900-398b42f67b7c/go.mod h1:WaBJpchpPv+CmK43RtwJG8Wj+2WEZ5zwErHoUZwikG0=
 github.com/brotherlogic/printer v0.0.0-20230101012716-64eb99f46a6a/go.mod h1:hMdjr+9h516xCQvuavrUxcv3ru5mteK5so3HXQEvvCc=
+github.com/brotherlogic/printer v0.0.0-20230108022149-cde29d1d72c7 h1:0oVA6s+JClNsXAT4bP7JCsXXu0A67A17E6woPVmV0Vk=
 github.com/brotherlogic/printer v0.0.0-20230108022149-cde29d1d72c7/go.mod h1:aPfwQIYtcZSaqcS2yB2lltqSUpWQ/QDY4/fOg213euI=
+github.com/brotherlogic/printer v0.0.0-20230725160400-75433f2c9c79 h1:ckmkYT7059hmoBoZQAi43MeJHaJ+HSAMC7Din3pCkdg=
+github.com/brotherlogic/printer v0.0.0-20230725160400-75433f2c9c79/go.mod h1:aPfwQIYtcZSaqcS2yB2lltqSUpWQ/QDY4/fOg213euI=
 github.com/brotherlogic/proxy v0.0.0-20201017172302-a8d9180667fa/go.mod h1:OeUyxUOUvW2EBiVLgjfRp9/7aWEofb6mnzCSFrd9xYE=
 github.com/brotherlogic/proxy v0.0.0-20211113222556-d6986396311e/go.mod h1:WdCgLYvTtDyXtqt/ludN/Gl7B0RsYr5hSlfd8EuaSXU=
 github.com/brotherlogic/proxy v0.0.0-20220306230204-551d2f4b1b0f/go.mod h1:Jd9DvlyQEtRtBRsCdP/vesrzDfJGZj/7e9iF8UF6QL4=
@@ -3137,6 +3140,7 @@ github.com/cenkalti/backoff v2.2.1+incompatible/go.mod h1:90ReRw6GdpyfrHakVjL/QH
 github.com/census-instrumentation/opencensus-proto v0.2.1/go.mod h1:f6KPmirojxKA12rnyqOA5BBL4O983OfeGPqjHWSTneU=
 github.com/census-instrumentation/opencensus-proto v0.3.0/go.mod h1:f6KPmirojxKA12rnyqOA5BBL4O983OfeGPqjHWSTneU=
 github.com/census-instrumentation/opencensus-proto v0.4.1/go.mod h1:4T9NM4+4Vw91VeyqjLS6ao50K5bOcLKN6Q42XnYaRYw=
+github.com/cespare/xxhash v1.1.0 h1:a6HrQnmkObjyL+Gs60czilIUGqrzKutQD6XZog3p+ko=
 github.com/cespare/xxhash v1.1.0/go.mod h1:XrSqR1VqqWfGrhpAt58auRo0WTKS1nRRg3ghfAqPWnc=
 github.com/cespare/xxhash/v2 v2.1.1/go.mod h1:VGX0DQ3Q6kWi7AoAeZDth3/j3BFtOZR5XLFGgcrjCOs=
 github.com/cespare/xxhash/v2 v2.1.2/go.mod h1:VGX0DQ3Q6kWi7AoAeZDth3/j3BFtOZR5XLFGgcrjCOs=

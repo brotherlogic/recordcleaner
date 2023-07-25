@@ -10,6 +10,7 @@ import (
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 
+	ppb "github.com/brotherlogic/printer/proto"
 	pb "github.com/brotherlogic/recordcleaner/proto"
 	rcpb "github.com/brotherlogic/recordcollection/proto"
 	"github.com/prometheus/client_golang/prometheus"
@@ -159,6 +160,11 @@ func (s *Server) GetClean(ctx context.Context, req *pb.GetCleanRequest) (*pb.Get
 	conn, err := s.FDialServer(ctx, "printer")
 	if err != nil {
 		return nil, status.Errorf(codes.Unavailable, "printer is unavailable (%v), assuming office is on shutdown", err)
+	}
+	pclient := ppb.NewPrintServiceClient(conn)
+	_, err = pclient.Ping(ctx, &ppb.PingRequest{})
+	if err != nil {
+		return nil, status.Errorf(codes.Unavailable, "printer is not online: %v", err)
 	}
 	conn.Close()
 

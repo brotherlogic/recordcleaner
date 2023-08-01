@@ -2171,8 +2171,9 @@ github.com/brotherlogic/printer v0.0.0-20221218005812-6e96f5029592/go.mod h1:wD6
 github.com/brotherlogic/printer v0.0.0-20221225010900-398b42f67b7c/go.mod h1:WaBJpchpPv+CmK43RtwJG8Wj+2WEZ5zwErHoUZwikG0=
 github.com/brotherlogic/printer v0.0.0-20230101012716-64eb99f46a6a/go.mod h1:hMdjr+9h516xCQvuavrUxcv3ru5mteK5so3HXQEvvCc=
 github.com/brotherlogic/printer v0.0.0-20230108022149-cde29d1d72c7/go.mod h1:aPfwQIYtcZSaqcS2yB2lltqSUpWQ/QDY4/fOg213euI=
-github.com/brotherlogic/printer v0.0.0-20230725160400-75433f2c9c79 h1:ckmkYT7059hmoBoZQAi43MeJHaJ+HSAMC7Din3pCkdg=
 github.com/brotherlogic/printer v0.0.0-20230725160400-75433f2c9c79/go.mod h1:aPfwQIYtcZSaqcS2yB2lltqSUpWQ/QDY4/fOg213euI=
+github.com/brotherlogic/printer v0.0.0-20230801163024-d9f79d444590 h1:8omvVh/9zhOTfCRSQTmuR9ZsTFMw6X71YshCmCmWzw0=
+github.com/brotherlogic/printer v0.0.0-20230801163024-d9f79d444590/go.mod h1:r7iSAYRs9vBElrQkC9Nd7A6QmvXv/+Vcvm+d57yZ/4k=
 github.com/brotherlogic/proxy v0.0.0-20201017172302-a8d9180667fa/go.mod h1:OeUyxUOUvW2EBiVLgjfRp9/7aWEofb6mnzCSFrd9xYE=
 github.com/brotherlogic/proxy v0.0.0-20211113222556-d6986396311e/go.mod h1:WdCgLYvTtDyXtqt/ludN/Gl7B0RsYr5hSlfd8EuaSXU=
 github.com/brotherlogic/proxy v0.0.0-20220306230204-551d2f4b1b0f/go.mod h1:Jd9DvlyQEtRtBRsCdP/vesrzDfJGZj/7e9iF8UF6QL4=

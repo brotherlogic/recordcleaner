@@ -161,12 +161,13 @@ func (s *Server) GetClean(ctx context.Context, req *pb.GetCleanRequest) (*pb.Get
 	if err != nil {
 		return nil, status.Errorf(codes.Unavailable, "printer is unavailable (%v), assuming office is on shutdown", err)
 	}
+	defer conn.Close()
+
 	pclient := ppb.NewPrintServiceClient(conn)
 	_, err = pclient.Ping(ctx, &ppb.PingRequest{})
 	if err != nil {
 		return nil, status.Errorf(codes.Unavailable, "printer is not online: %v", err)
 	}
-	conn.Close()
 
 	config, err := s.loadConfig(ctx)
 	if err != nil {

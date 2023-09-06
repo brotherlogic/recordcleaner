@@ -41,7 +41,7 @@ func main() {
 			}
 		}
 	case "get":
-		res, err := lclient.GetClean(ctx, &pb.GetCleanRequest{})
+		res, err := lclient.GetClean(ctx, &pb.GetCleanRequest{Peek: true})
 		if err != nil {
 			log.Fatalf("Error on Get Clean: %v", err)
 		}

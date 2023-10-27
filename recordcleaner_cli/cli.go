@@ -27,6 +27,9 @@ func main() {
 	lclient := pb.NewRecordCleanerServiceClient(conn)
 
 	switch os.Args[1] {
+	case "test":
+		val := time.Now().Hour() < 8 && (time.Now().Weekday() != time.Friday || time.Now().Hour() < 7)
+		fmt.Printf("VAL: %v\n", val)
 	case "update":
 		updateFlags := flag.NewFlagSet("Update", flag.ExitOnError)
 		var id = updateFlags.Int("id", -1, "Id of the record to add")

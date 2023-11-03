@@ -286,9 +286,9 @@ func (s *Server) GetClean(ctx context.Context, req *pb.GetCleanRequest) (*pb.Get
 			return nil, status.Errorf(codes.InvalidArgument, "Refreshing box pick")
 		}
 
-		if rec.GetRecord().GetMetadata().GetCategory() != rcpb.ReleaseMetadata_PRE_VALIDATE && outOfBounds {
-			return nil, status.Errorf(codes.ResourceExhausted, "you've cleaned %v records today, that is plenty", yearDayCount)
-		}
+		//if rec.GetRecord().GetMetadata().GetCategory() != rcpb.ReleaseMetadata_PRE_VALIDATE && outOfBounds {
+		//	return nil, status.Errorf(codes.ResourceExhausted, "you've cleaned %v records today, that is plenty", yearDayCount)
+		//}
 
 		return &pb.GetCleanResponse{InstanceId: config.CurrentBoxPick, Seen: sids}, nil
 	}

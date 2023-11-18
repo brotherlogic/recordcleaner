@@ -1453,8 +1453,8 @@ github.com/brotherlogic/datastore v0.0.0-20231027143948-d495c204589c/go.mod h1:G
 github.com/brotherlogic/datastore v0.0.0-20231027152327-854bf670897c/go.mod h1:1BALiiBXwzozxpN+3bBumMksfRdwfOdVelqr2Px4lSM=
 github.com/brotherlogic/datastore v0.0.0-20231103160805-7167e62c874b/go.mod h1:KPptXsVLGM01K2tshD6ZIpPJqhwKwrRXPvCN2WHNfuQ=
 github.com/brotherlogic/datastore v0.0.0-20231110172723-ea3e0594fc6c/go.mod h1:kwQXP0+5aKzMIrv7qtS0/qGws4St29ig6l2sxjX+mjA=
-github.com/brotherlogic/datastore v0.0.0-20231118195413-e465113847b6 h1:m7FgoEWrcpsQa+0TlJEPNV51dNgoFTZ83wCvuyUbzAc=
-github.com/brotherlogic/datastore v0.0.0-20231118195413-e465113847b6/go.mod h1:3AlGLS/vaCfRTZfiFIJdniUpNyDWDmq7rghhrbbDi1A=
+github.com/brotherlogic/datastore v0.0.0-20231118215452-e982eb7b2c91 h1:EjGMUbGaGQOOVjDzLD018iZqZ8omWbH3j6h0Gvoq1Ko=
+github.com/brotherlogic/datastore v0.0.0-20231118215452-e982eb7b2c91/go.mod h1:b0drtS3TPdhSS+Cmw63njG/oPexGIB4KOSspr1FcOJM=
 github.com/brotherlogic/discovery v0.0.0-20200925011539-74a8dc203ba4/go.mod h1:W9XhDhsvBgeIgnOKgcWmtFilO549fuIhRMlVHiXAC9k=
 github.com/brotherlogic/discovery v0.0.0-20210531005423-1d609c4f6278/go.mod h1:W9XhDhsvBgeIgnOKgcWmtFilO549fuIhRMlVHiXAC9k=
 github.com/brotherlogic/discovery v0.0.0-20210603130245-be477d62024e/go.mod h1:W9XhDhsvBgeIgnOKgcWmtFilO549fuIhRMlVHiXAC9k=
@@ -2770,8 +2770,8 @@ github.com/brotherlogic/printer v0.0.0-20230902015757-06a1dffbec95/go.mod h1:qgj
 github.com/brotherlogic/printer v0.0.0-20230909021048-1a551ed93ce8/go.mod h1:JEdPuRi8zNFLWuvaJXqLE4sFJkTFfiAGnx6fAEqtePM=
 github.com/brotherlogic/printer v0.0.0-20230918222204-fd599ae5b5ad/go.mod h1:2axzpY7FPXOtMrQXV39mhspks59bNvXqQ1flh/6K9fQ=
 github.com/brotherlogic/printer v0.0.0-20230927053844-0171ce0db2b2/go.mod h1:BZAFleN1AIoz03BByT1dp+V4vi/K8Fc26esWHTw2ZIs=
-github.com/brotherlogic/printer v0.0.0-20231118210622-9eb160509f6b h1:u0VuTc+8tOIXPQXhyou0G5lYP0Glmzry9/bsj4cOei0=
-github.com/brotherlogic/printer v0.0.0-20231118210622-9eb160509f6b/go.mod h1:qtPtqvVy9tGx4aWCGFcO9IgGARWCHAwryGwMX3G0RzE=
+github.com/brotherlogic/printer v0.0.0-20231118225156-a283c7a0bb7d h1:TFQwC0XufGVSudFWXU7t0K9NQwNJP5l3vCVQKKVCoqM=
+github.com/brotherlogic/printer v0.0.0-20231118225156-a283c7a0bb7d/go.mod h1:kWyZTBvYhfZE8QRRMuE2ax4qb7d0jVCJHtmSxja89VQ=
 github.com/brotherlogic/printqueue v0.27.0/go.mod h1:GvYVDTeHOShsl4I3PxZVAvylg04BMGQgUCVwJgRG/lU=
 github.com/brotherlogic/printqueue v0.28.0/go.mod h1:GvYVDTeHOShsl4I3PxZVAvylg04BMGQgUCVwJgRG/lU=
 github.com/brotherlogic/printqueue v0.29.0/go.mod h1:GvYVDTeHOShsl4I3PxZVAvylg04BMGQgUCVwJgRG/lU=

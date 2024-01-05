@@ -18,6 +18,7 @@ message Config {
   map<string, int64> day_category_count = 8;
 
   int64 last_relevant_clean = 9;
+  int32 non_pre_validate_clean = 10;
 }
 
 message GetCleanRequest {

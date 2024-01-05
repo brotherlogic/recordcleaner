@@ -73,6 +73,10 @@ func (s *Server) ClientUpdate(ctx context.Context, in *rcpb.ClientUpdateRequest)
 			return nil, err
 		}
 
+		if rec.GetMetadata().GetCategory() != rcpb.ReleaseMetadata_PRE_VALIDATE {
+			config.NonPreValidateClean += 1
+		}
+
 		if rec.GetMetadata().GetCategory() == rcpb.ReleaseMetadata_UNLISTENED {
 			config.LastRelevantClean = time.Now().Unix()
 		}
@@ -105,6 +109,7 @@ func (s *Server) ClientUpdate(ctx context.Context, in *rcpb.ClientUpdateRequest)
 			} else {
 				config.DayCount = 1
 				config.DayOfYear = int32(time.Now().YearDay())
+				config.NonPreValidateClean = 0
 			}
 
 			s.CtxLog(ctx, fmt.Sprintf("Day clean %v and %v and %v from %v (since %v and %v) => %v", config.DayCount, config.DayOfYear, time.Now().YearDay(), in.GetInstanceId(), rec.GetMetadata().GetLastCleanDate(), ld, config.GetLastCleanTime()[in.GetInstanceId()]))
@@ -175,6 +180,8 @@ func (s *Server) GetClean(ctx context.Context, req *pb.GetCleanRequest) (*pb.Get
 	if err != nil {
 		return nil, err
 	}
+
+	s.CtxLog(ctx, fmt.Sprintf("SEEN %v so far", config.GetNonPreValidateClean()))
 
 	// Determine if we should even be cleaning
 	outOfBounds := false
@@ -259,7 +266,9 @@ func (s *Server) GetClean(ctx context.Context, req *pb.GetCleanRequest) (*pb.Get
 					return nil, err
 				}
 				if rec.GetRecord().GetMetadata().GetDateArrived() > 0 && rec.Record.GetMetadata().GetLastCleanDate() == 0 && rec.GetRecord().Metadata.GetGoalFolder() != 1782105 {
-					valids = append(valids, id)
+					if config.GetNonPreValidateClean() < 3 || rec.GetRecord().GetMetadata().GetCategory() == rcpb.ReleaseMetadata_PRE_VALIDATE {
+						valids = append(valids, id)
+					}
 				}
 			}
 			if len(valids) == 0 {

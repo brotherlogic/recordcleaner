@@ -181,6 +181,8 @@ func (s *Server) GetClean(ctx context.Context, req *pb.GetCleanRequest) (*pb.Get
 		return nil, err
 	}
 
+	s.CtxLog(ctx, fmt.Sprintf("SEEN %v so far", config.GetNonPreValidateClean()))
+
 	// Determine if we should even be cleaning
 	outOfBounds := false
 	if (time.Now().Weekday() == time.Friday && time.Since(time.Unix(config.GetLastRelevantClean(), 0)) < time.Hour) ||

@@ -73,10 +73,6 @@ func (s *Server) ClientUpdate(ctx context.Context, in *rcpb.ClientUpdateRequest)
 			return nil, err
 		}
 
-		if rec.GetMetadata().GetCategory() != rcpb.ReleaseMetadata_PRE_VALIDATE {
-			config.NonPreValidateClean += 1
-		}
-
 		if rec.GetMetadata().GetCategory() == rcpb.ReleaseMetadata_UNLISTENED {
 			config.LastRelevantClean = time.Now().Unix()
 		}
@@ -110,6 +106,10 @@ func (s *Server) ClientUpdate(ctx context.Context, in *rcpb.ClientUpdateRequest)
 				config.DayCount = 1
 				config.DayOfYear = int32(time.Now().YearDay())
 				config.NonPreValidateClean = 0
+			}
+
+			if rec.GetMetadata().GetCategory() != rcpb.ReleaseMetadata_PRE_VALIDATE {
+				config.NonPreValidateClean += 1
 			}
 
 			s.CtxLog(ctx, fmt.Sprintf("Day clean %v and %v and %v from %v (since %v and %v) => %v", config.DayCount, config.DayOfYear, time.Now().YearDay(), in.GetInstanceId(), rec.GetMetadata().GetLastCleanDate(), ld, config.GetLastCleanTime()[in.GetInstanceId()]))

@@ -74,6 +74,7 @@ func (s *Server) ClientUpdate(ctx context.Context, in *rcpb.ClientUpdateRequest)
 		}
 
 		if rec.GetMetadata().GetCategory() != rcpb.ReleaseMetadata_PRE_VALIDATE {
+			s.CtxLog(ctx, fmt.Sprintf("SEEN %v ", rec)
 			config.NonPreValidateClean += 1
 		}
 

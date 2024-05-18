@@ -19,6 +19,8 @@ func (s *Server) metrics(config *pb.Config) {
 		return
 	}
 
+	lastNewClean.Set(float64(config.GetLastRelevantClean()))
+
 	total := len(config.GetLastCleanTime())
 	done := 0
 	today := 0

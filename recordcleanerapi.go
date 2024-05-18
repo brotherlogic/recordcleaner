@@ -38,6 +38,9 @@ var (
 		Name: "recordcleaner_cleaned_per_day",
 		Help: "The size of the print queue",
 	})
+	lastNewClean = promauto.NewGauge(prometheus.GaugeOpts{
+		Name: "recordcleaner_new_clean",
+	})
 )
 
 // ClientUpdate forces a move

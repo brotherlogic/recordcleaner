@@ -19,6 +19,8 @@ func (s *Server) metrics(config *pb.Config) {
 		return
 	}
 
+	pvTog.Set(float64(config.GetNonPreValidateClean()))
+
 	lastNewClean.Set(float64(config.GetLastRelevantClean()))
 
 	total := len(config.GetLastCleanTime())

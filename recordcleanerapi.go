@@ -41,6 +41,9 @@ var (
 	lastNewClean = promauto.NewGauge(prometheus.GaugeOpts{
 		Name: "recordcleaner_new_clean",
 	})
+	pvTog = promauto.NewGauge(prometheus.GaugeOpts{
+		Name: "recordcleaner_pv",
+	})
 )
 
 // ClientUpdate forces a move

@@ -333,8 +333,8 @@ func (s *Server) GetClean(ctx context.Context, req *pb.GetCleanRequest) (*pb.Get
 			if rec.GetRecord().GetMetadata().GetCategory() == rcpb.ReleaseMetadata_PRE_VALIDATE {
 				return &pb.GetCleanResponse{InstanceId: id, Seen: sids}, nil
 			}
-			return nil, status.Errorf(codes.FailedPrecondition, "Nothing to clean")
 		}
+		return nil, status.Errorf(codes.FailedPrecondition, "Nothing to clean")
 	}
 
 	return &pb.GetCleanResponse{InstanceId: ids.GetInstanceIds()[0], Seen: sids}, nil

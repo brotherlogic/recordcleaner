@@ -5,7 +5,7 @@ go 1.22.1
 require (
 	github.com/brotherlogic/dstore v0.0.0-20240621172204-4f82d384fb46
 	github.com/brotherlogic/goserver v0.0.0-20240303220030-80da220f0393
-	github.com/brotherlogic/printer v0.0.0-20240621164009-03540f3c7f3d
+	github.com/brotherlogic/printer v0.0.0-20240621184253-b07794b29d32
 	github.com/brotherlogic/recordcollection v0.0.0-20240621182128-16bf547d55ae
 	github.com/golang/protobuf v1.5.4
 	github.com/prometheus/client_golang v1.19.1

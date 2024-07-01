@@ -166,9 +166,6 @@ func (s *Server) Service(ctx context.Context, req *pb.ServiceRequest) (*pb.Servi
 
 func (s *Server) GetClean(ctx context.Context, req *pb.GetCleanRequest) (*pb.GetCleanResponse, error) {
 	if !req.GetPeek() {
-		if time.Now().Hour() < 8 && (time.Now().Weekday() != time.Friday || time.Now().Hour() < 7) {
-			return nil, status.Errorf(codes.OutOfRange, "No cleaning before 8am")
-		}
 		conn, err := s.FDialServer(ctx, "printer")
 		if err != nil {
 			return nil, status.Errorf(codes.Unavailable, "printer is unavailable (%v), assuming office is on shutdown", err)

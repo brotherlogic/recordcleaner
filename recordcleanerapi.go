@@ -269,12 +269,13 @@ func (s *Server) GetClean(ctx context.Context, req *pb.GetCleanRequest) (*pb.Get
 					return nil, err
 				}
 				if rec.GetRecord().GetMetadata().GetDateArrived() > 0 && rec.Record.GetMetadata().GetLastCleanDate() == 0 && rec.GetRecord().Metadata.GetGoalFolder() != 1782105 {
-					if config.GetNonPreValidateClean() < 1 || rec.GetRecord().GetMetadata().GetCategory() == rcpb.ReleaseMetadata_PRE_VALIDATE || {
+					if config.GetNonPreValidateClean() < 1 || rec.GetRecord().GetMetadata().GetCategory() == rcpb.ReleaseMetadata_PRE_VALIDATE  {
 						s.CtxLog(ctx, fmt.Sprintf("Adding (%v): %v -> %v", id, config.GetNonPreValidateClean(), rec.GetRecord().GetMetadata().GetCategory()))
 						valids = append(valids, id)
 					}
 				}
 			}
+
 			if len(valids) == 0 {
 				// Always be cleaning 45s
 				for _, id := range ids.GetInstanceIds() {

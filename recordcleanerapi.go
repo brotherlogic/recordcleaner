@@ -275,7 +275,15 @@ func (s *Server) GetClean(ctx context.Context, req *pb.GetCleanRequest) (*pb.Get
 					}
 				}
 			}
+
 			if len(valids) == 0 {
+				// Always be cleaning 45s
+				for _, id := range ids.GetInstanceIds() {
+					rec, err := client.GetRecord(ctx, &rcpb.GetRecordRequest{InstanceId: id})
+					if err == nil && rec.GetRecord().GetMetadata().GetFiledUnder() == rcpb.ReleaseMetadata_FILE_7_INCH {
+						return &pb.GetCleanResponse{InstanceId: id}, nil
+					}
+				}
 				return nil, status.Errorf(codes.ResourceExhausted, "Nothing to clean")
 			}
 

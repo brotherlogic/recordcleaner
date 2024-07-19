@@ -339,6 +339,17 @@ func (s *Server) GetClean(ctx context.Context, req *pb.GetCleanRequest) (*pb.Get
 				return &pb.GetCleanResponse{InstanceId: id, Seen: sids}, nil
 			}
 		}
+
+		for _, id := range ids.GetInstanceIds() {
+			rec, err := client.GetRecord(ctx, &rcpb.GetRecordRequest{InstanceId: id})
+			if err != nil {
+				return nil, err
+			}
+			if rec.GetRecord().GetMetadata().GetFiledUnder() == rcpb.ReleaseMetadata_FILE_7_INCH {
+				return &pb.GetCleanResponse{InstanceId: id, Seen: sids}, nil
+			}
+		}
+
 		return nil, status.Errorf(codes.FailedPrecondition, "Nothing to clean")
 	}
 

@@ -5,10 +5,10 @@ go 1.22.3
 toolchain go1.23.0
 
 require (
-	github.com/brotherlogic/dstore v0.0.0-20241004215524-da369341b2eb
+	github.com/brotherlogic/dstore v0.0.0-20241004225528-77e95ce144df
 	github.com/brotherlogic/goserver v0.0.0-20240826215223-fccbac46b3d4
 	github.com/brotherlogic/printer v0.0.0-20241002080529-c460f33ca50c
-	github.com/brotherlogic/recordcollection v0.0.0-20241004212747-01e16d6fc780
+	github.com/brotherlogic/recordcollection v0.0.0-20241004222941-ab2edb66aeaa
 	github.com/golang/protobuf v1.5.4
 	github.com/prometheus/client_golang v1.20.4
 	golang.org/x/net v0.30.0

@@ -337,7 +337,7 @@ func (s *Server) GetClean(ctx context.Context, req *pb.GetCleanRequest) (*pb.Get
 			if err != nil {
 				return nil, err
 			}
-			if rec.GetRecord().GetMetadata().GetCategory() == rcpb.ReleaseMetadata_PRE_VALIDATE {
+			if rec.GetRecord().GetMetadata().GetCategory() == rcpb.ReleaseMetadata_PRE_VALIDATE && !rec.GetRecord().GetMetadata().GetNeedsGramUpdate() {
 				return &pb.GetCleanResponse{InstanceId: id, Seen: sids}, nil
 			}
 		}
@@ -347,7 +347,7 @@ func (s *Server) GetClean(ctx context.Context, req *pb.GetCleanRequest) (*pb.Get
 			if err != nil {
 				return nil, err
 			}
-			if rec.GetRecord().GetMetadata().GetFiledUnder() == rcpb.ReleaseMetadata_FILE_7_INCH {
+			if rec.GetRecord().GetMetadata().GetFiledUnder() == rcpb.ReleaseMetadata_FILE_7_INCH && !rec.GetRecord().GetMetadata().GetNeedsGramUpdate() {
 				return &pb.GetCleanResponse{InstanceId: id, Seen: sids}, nil
 			}
 		}
@@ -357,7 +357,7 @@ func (s *Server) GetClean(ctx context.Context, req *pb.GetCleanRequest) (*pb.Get
 			if err != nil {
 				return nil, err
 			}
-			if rec.GetRecord().GetMetadata().GetFiledUnder() == rcpb.ReleaseMetadata_FILE_12_INCH {
+			if rec.GetRecord().GetMetadata().GetFiledUnder() == rcpb.ReleaseMetadata_FILE_12_INCH && !rec.GetRecord().GetMetadata().GetNeedsGramUpdate() {
 				return &pb.GetCleanResponse{InstanceId: id, Seen: sids}, nil
 			}
 		}

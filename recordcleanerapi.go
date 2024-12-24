@@ -268,11 +268,13 @@ func (s *Server) GetClean(ctx context.Context, req *pb.GetCleanRequest) (*pb.Get
 				if err != nil {
 					return nil, err
 				}
-				if rec.GetRecord().GetMetadata().GetDateArrived() > 0 && rec.Record.GetMetadata().GetLastCleanDate() == 0 && rec.GetRecord().Metadata.GetGoalFolder() != 1782105 {
-					if config.GetNonPreValidateClean() < 1 || rec.GetRecord().GetMetadata().GetCategory() == rcpb.ReleaseMetadata_PRE_VALIDATE {
-						if !rec.GetRecord().GetMetadata().GetNeedsGramUpdate() {
-							s.CtxLog(ctx, fmt.Sprintf("Adding (%v): %v -> %v", id, config.GetNonPreValidateClean(), rec.GetRecord().GetMetadata().GetCategory()))
-							valids = append(valids, id)
+				if rec.GetRecord().GetMetadata().GetFiledUnder() == rcpb.ReleaseMetadata_FILE_12_INCH {
+					if rec.GetRecord().GetMetadata().GetDateArrived() > 0 && rec.Record.GetMetadata().GetLastCleanDate() == 0 && rec.GetRecord().Metadata.GetGoalFolder() != 1782105 {
+						if config.GetNonPreValidateClean() < 1 || rec.GetRecord().GetMetadata().GetCategory() == rcpb.ReleaseMetadata_PRE_VALIDATE {
+							if !rec.GetRecord().GetMetadata().GetNeedsGramUpdate() {
+								s.CtxLog(ctx, fmt.Sprintf("Adding (%v): %v -> %v", id, config.GetNonPreValidateClean(), rec.GetRecord().GetMetadata().GetCategory()))
+								valids = append(valids, id)
+							}
 						}
 					}
 				}
@@ -347,7 +349,7 @@ func (s *Server) GetClean(ctx context.Context, req *pb.GetCleanRequest) (*pb.Get
 			if err != nil {
 				return nil, err
 			}
-			if rec.GetRecord().GetMetadata().GetFiledUnder() == rcpb.ReleaseMetadata_FILE_7_INCH && !rec.GetRecord().GetMetadata().GetNeedsGramUpdate() {
+			if rec.GetRecord().GetMetadata().GetFiledUnder() == rcpb.ReleaseMetadata_FILE_12_INCH && !rec.GetRecord().GetMetadata().GetNeedsGramUpdate() {
 				return &pb.GetCleanResponse{InstanceId: id, Seen: sids}, nil
 			}
 		}
@@ -357,7 +359,7 @@ func (s *Server) GetClean(ctx context.Context, req *pb.GetCleanRequest) (*pb.Get
 			if err != nil {
 				return nil, err
 			}
-			if rec.GetRecord().GetMetadata().GetFiledUnder() == rcpb.ReleaseMetadata_FILE_12_INCH && !rec.GetRecord().GetMetadata().GetNeedsGramUpdate() {
+			if rec.GetRecord().GetMetadata().GetFiledUnder() == rcpb.ReleaseMetadata_FILE_7_INCH && !rec.GetRecord().GetMetadata().GetNeedsGramUpdate() {
 				return &pb.GetCleanResponse{InstanceId: id, Seen: sids}, nil
 			}
 		}

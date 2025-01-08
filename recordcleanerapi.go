@@ -241,7 +241,7 @@ func (s *Server) GetClean(ctx context.Context, req *pb.GetCleanRequest) (*pb.Get
 	s.CtxLog(ctx, fmt.Sprintf("Queried %v -> found %v -> %v", TOGO_FOLDER, len(ids.GetInstanceIds()), ids))
 
 	sort.SliceStable(ids.InstanceIds, func(i, j int) bool {
-		return ids.InstanceIds[i] < ids.InstanceIds[j]
+		return ids.InstanceIds[i] > ids.InstanceIds[j]
 	})
 
 	var sids []int32

@@ -324,13 +324,7 @@ func (s *Server) GetClean(ctx context.Context, req *pb.GetCleanRequest) (*pb.Get
 
 	var nids []int32
 	for _, id := range ids.GetInstanceIds() {
-		rec, err := client.GetRecord(ctx, &rcpb.GetRecordRequest{InstanceId: id})
-		if err != nil {
-			return nil, err
-		}
-		if rec.GetRecord().GetMetadata().GetFiledUnder() == rcpb.ReleaseMetadata_FILE_12_INCH {
-			nids = append(nids, id)
-		}
+		nids = append(nids, id)
 	}
 	ids.InstanceIds = nids
 

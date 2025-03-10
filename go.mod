@@ -3,9 +3,9 @@ module github.com/brotherlogic/recordcleaner
 go 1.23.2
 
 require (
-	github.com/brotherlogic/dstore v0.0.0-20250310002326-1ac2c2697acd
+	github.com/brotherlogic/dstore v0.0.0-20250310012228-afbf0008ea7d
 	github.com/brotherlogic/goserver v0.0.0-20250123145056-95c6fbb2310a
-	github.com/brotherlogic/printer v0.0.0-20250310003123-416460b0e302
+	github.com/brotherlogic/printer v0.0.0-20250310013325-8ea46473a530
 	github.com/brotherlogic/recordcollection v0.0.0-20250227174213-ce20ec909d87
 	github.com/golang/protobuf v1.5.4
 	github.com/prometheus/client_golang v1.21.1
@@ -25,7 +25,7 @@ require (
 	github.com/brotherlogic/godiscogs v0.0.0-20250131163651-1e34c776a68e // indirect
 	github.com/brotherlogic/keystore v0.0.0-20240508161349-814b3200b126 // indirect
 	github.com/brotherlogic/lock v0.0.0-20250310010226-5b47223e728f // indirect
-	github.com/brotherlogic/logging v0.0.0-20250310005803-eacbfbfc5690 // indirect
+	github.com/brotherlogic/logging v0.0.0-20250310012519-56f4b00832b2 // indirect
 	github.com/brotherlogic/monitor v0.0.0-20221025152653-c10877c5f9e6 // indirect
 	github.com/brotherlogic/versionserver v0.0.0-20221025154054-c9bcd41be2f2 // indirect
 	github.com/cespare/xxhash/v2 v2.3.0 // indirect

@@ -3,7 +3,7 @@ module github.com/brotherlogic/recordcleaner
 go 1.23.2
 
 require (
-	github.com/brotherlogic/dstore v0.0.0-20250318143843-fd34b35c4b57
+	github.com/brotherlogic/dstore v0.0.0-20250318153744-57ddba2265ec
 	github.com/brotherlogic/goserver v0.0.0-20250123145056-95c6fbb2310a
 	github.com/brotherlogic/printer v0.0.0-20250318143619-9e823335dd29
 	github.com/brotherlogic/recordcollection v0.0.0-20250227174213-ce20ec909d87
@@ -25,7 +25,7 @@ require (
 	github.com/brotherlogic/godiscogs v0.0.0-20250131163651-1e34c776a68e // indirect
 	github.com/brotherlogic/keystore v0.0.0-20240508161349-814b3200b126 // indirect
 	github.com/brotherlogic/lock v0.0.0-20250318150917-9d811d5dc4f5 // indirect
-	github.com/brotherlogic/logging v0.0.0-20250318152926-f027e93d033c // indirect
+	github.com/brotherlogic/logging v0.0.0-20250318153759-edf65ab63c05 // indirect
 	github.com/brotherlogic/monitor v0.0.0-20221025152653-c10877c5f9e6 // indirect
 	github.com/brotherlogic/versionserver v0.0.0-20221025154054-c9bcd41be2f2 // indirect
 	github.com/cespare/xxhash/v2 v2.3.0 // indirect

@@ -178,6 +178,8 @@ func (s *Server) GetClean(ctx context.Context, req *pb.GetCleanRequest) (*pb.Get
 	timev := s.lastUpdate[rec.GetRelease().GetInstanceId()]
 	if timev > 0 && time.Since(time.Unix(timev, 0)) > time.Minute*10 {
 		s.pingRecord(ctx, clean.GetInstanceId())
+	} else if timev == 0 {
+		s.lastUpdate[rec.GetRelease().GetInstanceId()] = time.Now().Unix()
 	}
 
 	return clean, err

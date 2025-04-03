@@ -14,6 +14,7 @@ import (
 	"google.golang.org/protobuf/proto"
 
 	dspb "github.com/brotherlogic/dstore/proto"
+	gdpb "github.com/brotherlogic/godiscogs/proto"
 	pbg "github.com/brotherlogic/goserver/proto"
 	"github.com/brotherlogic/goserver/utils"
 	pb "github.com/brotherlogic/recordcleaner/proto"
@@ -40,9 +41,10 @@ var (
 	})
 )
 
-//Server main server type
+// Server main server type
 type Server struct {
 	*goserver.GoServer
+	lastUpdate map[int32]int64
 }
 
 func (s *Server) loadConfig(ctx context.Context) (*pb.Config, error) {
@@ -111,7 +113,8 @@ func (s *Server) saveConfig(ctx context.Context, config *pb.Config) error {
 // Init builds the server
 func Init() *Server {
 	s := &Server{
-		GoServer: &goserver.GoServer{},
+		GoServer:   &goserver.GoServer{},
+		lastUpdate: make(map[int32]int64),
 	}
 
 	return s
@@ -130,6 +133,20 @@ func (s *Server) getRecord(ctx context.Context, iid int32) (*rcpb.Record, error)
 		return nil, err
 	}
 	return r.GetRecord(), nil
+}
+
+func (s *Server) pingRecord(ctx context.Context, iid int32) {
+	conn, err := s.FDialServer(ctx, "recordcollection")
+	if err != nil {
+		return
+	}
+	defer conn.Close()
+
+	client := rcpb.NewRecordCollectionServiceClient(conn)
+	_, err = client.UpdateRecord(ctx, &rcpb.UpdateRecordRequest{Update: &rcpb.Record{Release: &gdpb.Release{InstanceId: iid}, Metadata: &rcpb.ReleaseMetadata{NeedsGramUpdate: true}}})
+	if err == nil {
+		s.lastUpdate[iid] = time.Now().Unix()
+	}
 }
 
 // DoRegister does RPC registration

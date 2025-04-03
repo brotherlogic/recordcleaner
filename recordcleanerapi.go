@@ -165,6 +165,27 @@ func (s *Server) Service(ctx context.Context, req *pb.ServiceRequest) (*pb.Servi
 }
 
 func (s *Server) GetClean(ctx context.Context, req *pb.GetCleanRequest) (*pb.GetCleanResponse, error) {
+	clean, err := s.GetCleanInternal(ctx, req)
+	if err != nil {
+		return clean, err
+	}
+
+	rec, err := s.getRecord(ctx, clean.GetInstanceId())
+	if err != nil {
+		return clean, err
+	}
+
+	timev := s.lastUpdate[rec.GetRelease().GetInstanceId()]
+	if timev > 0 && time.Since(time.Unix(timev, 0)) > time.Minute*10 {
+		s.pingRecord(ctx, clean.GetInstanceId())
+	} else if timev == 0 {
+		s.lastUpdate[rec.GetRelease().GetInstanceId()] = time.Now().Unix()
+	}
+
+	return clean, err
+}
+
+func (s *Server) GetCleanInternal(ctx context.Context, req *pb.GetCleanRequest) (*pb.GetCleanResponse, error) {
 	if !req.GetPeek() {
 		conn, err := s.FDialServer(ctx, "printer")
 		if err != nil {

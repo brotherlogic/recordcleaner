@@ -143,7 +143,7 @@ func (s *Server) pingRecord(ctx context.Context, iid int32) {
 	defer conn.Close()
 
 	client := rcpb.NewRecordCollectionServiceClient(conn)
-	_, err = client.UpdateRecord(ctx, &rcpb.UpdateRecordRequest{Update: &rcpb.Record{Release: &gdpb.Release{InstanceId: iid}, Metadata: &rcpb.ReleaseMetadata{NeedsGramUpdate: true}}})
+	_, err = client.UpdateRecord(ctx, &rcpb.UpdateRecordRequest{Reason: "Pulling Gram", Update: &rcpb.Record{Release: &gdpb.Release{InstanceId: iid}, Metadata: &rcpb.ReleaseMetadata{NeedsGramUpdate: true}}})
 	if err == nil {
 		s.lastUpdate[iid] = time.Now().Unix()
 	}

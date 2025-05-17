@@ -391,7 +391,7 @@ func (s *Server) GetCleanInternal(ctx context.Context, req *pb.GetCleanRequest) 
 			}
 		}
 
-		return nil, status.Errorf(codes.FailedPrecondition, "Nothing to clean")
+		return nil, status.Errorf(codes.ResourceExhausted, "Nothing to clean")
 	}
 
 	return &pb.GetCleanResponse{InstanceId: ids.GetInstanceIds()[0], Seen: sids}, nil

@@ -6,8 +6,8 @@ require (
 	github.com/brotherlogic/dstore v0.0.0-20250613140516-5b29ccb83705
 	github.com/brotherlogic/godiscogs v0.0.0-20250429182651-404c7473edf8
 	github.com/brotherlogic/goserver v0.0.0-20250608182006-4ace595931a5
-	github.com/brotherlogic/printer v0.0.0-20250621190206-1796bddd1c81
-	github.com/brotherlogic/recordcollection v0.0.0-20250617153857-d1849643b935
+	github.com/brotherlogic/printer v0.0.0-20250628171915-ea8dd171ecc3
+	github.com/brotherlogic/recordcollection v0.0.0-20250625165631-0ab7d5811bd2
 	github.com/golang/protobuf v1.5.4
 	github.com/prometheus/client_golang v1.22.0
 	golang.org/x/net v0.41.0
@@ -17,22 +17,22 @@ require (
 
 require (
 	github.com/beorn7/perks v1.0.1 // indirect
-	github.com/brotherlogic/buildserver v0.0.0-20250620155930-3faeb9b1a285 // indirect
+	github.com/brotherlogic/buildserver v0.0.0-20250628190952-0f046fadfc5e // indirect
 	github.com/brotherlogic/datastore v0.0.0-20250610012354-722a6beaa331 // indirect
 	github.com/brotherlogic/discovery v0.0.0-20250613142713-1dac6d7d6bdd // indirect
-	github.com/brotherlogic/githubcard v0.0.0-20250621142930-8f801a304906 // indirect
+	github.com/brotherlogic/githubcard v0.0.0-20250628144502-a9135f09c106 // indirect
 	github.com/brotherlogic/githubridge v0.2865.0 // indirect
 	github.com/brotherlogic/gobuildslave v0.0.0-20250617150904-f41a1af90c2d // indirect
 	github.com/brotherlogic/keystore v0.0.0-20240508161349-814b3200b126 // indirect
-	github.com/brotherlogic/lock v0.0.0-20250621170355-a2c267c3d56c // indirect
-	github.com/brotherlogic/logging v0.0.0-20250621170648-d87cb087f9ad // indirect
+	github.com/brotherlogic/lock v0.0.0-20250628190815-6879392273b4 // indirect
+	github.com/brotherlogic/logging v0.0.0-20250628191902-7a5c297adf01 // indirect
 	github.com/brotherlogic/monitor v0.0.0-20221025152653-c10877c5f9e6 // indirect
 	github.com/brotherlogic/versionserver v0.0.0-20221025154054-c9bcd41be2f2 // indirect
 	github.com/cespare/xxhash/v2 v2.3.0 // indirect
 	github.com/mitchellh/go-ps v1.0.0 // indirect
 	github.com/munnerz/goautoneg v0.0.0-20191010083416-a7dc8b61c822 // indirect
 	github.com/prometheus/client_model v0.6.2 // indirect
-	github.com/prometheus/common v0.64.0 // indirect
+	github.com/prometheus/common v0.65.0 // indirect
 	github.com/prometheus/procfs v0.16.1 // indirect
 	github.com/struCoder/pidusage v0.2.1 // indirect
 	golang.org/x/sys v0.33.0 // indirect

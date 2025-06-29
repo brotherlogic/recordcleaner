@@ -26,8 +26,8 @@ github.com/brotherlogic/logging v0.0.0-20250629052428-da5dd1210c86 h1:sI8mRbu6QA
 github.com/brotherlogic/logging v0.0.0-20250629052428-da5dd1210c86/go.mod h1:S6tOqq6J0uz2ni9Kd3cnyeYybb+CUUN00YMpGFQ3gkc=
 github.com/brotherlogic/monitor v0.0.0-20221025152653-c10877c5f9e6 h1:hxu2T9JspE76sL3XAx/CNtA9bOO6QCEJkyG9rBXFEVA=
 github.com/brotherlogic/monitor v0.0.0-20221025152653-c10877c5f9e6/go.mod h1:babny4VO2GqFwjXqhJsP4a6la4XJeMT6f4BgLBPq4G8=
-github.com/brotherlogic/printer v0.0.0-20250629042344-eb922df0e434 h1:fRlnPluy3wiMdfkLCegbQjywP0sgs6VNKHsStehihT8=
-github.com/brotherlogic/printer v0.0.0-20250629042344-eb922df0e434/go.mod h1:hrUi15iWC5f49wffVD/ld1toQWkaMOHO1ldxvgzJLYs=
+github.com/brotherlogic/printer v0.0.0-20250629062441-894be500a597 h1:TVIy9ypqsF4sGeaRejRba+3bbUTR1nBN880wMyEY5Rc=
+github.com/brotherlogic/printer v0.0.0-20250629062441-894be500a597/go.mod h1:R2hiyY9LvzMpMXBPc+Fynx8456x2nlYdEjLEJOiyrUI=
 github.com/brotherlogic/recordcollection v0.0.0-20250625165631-0ab7d5811bd2 h1:ngTMN0yJbwB8PG/LN1fr4JtN4L6K4nrh3eHm13Fz6pE=
 github.com/brotherlogic/recordcollection v0.0.0-20250625165631-0ab7d5811bd2/go.mod h1:NnhvH//ryqGgwgMfI9OXqouzrsSQ9VeYoyUuqxhYH+E=
 github.com/brotherlogic/versionserver v0.0.0-20221025154054-c9bcd41be2f2 h1:YjFE4Sa+wwbl4yJwJaMQVeA4CMzLIDbbIuSMdsEp5/w=

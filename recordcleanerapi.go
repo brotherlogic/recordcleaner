@@ -366,7 +366,7 @@ func (s *Server) GetCleanInternal(ctx context.Context, req *pb.GetCleanRequest) 
 			if err != nil {
 				return nil, err
 			}
-			if rec.GetRecord().GetMetadata().GetCategory() == rcpb.ReleaseMetadata_PRE_VALIDATE && rec.GetRecord().GetMetadata().GetLastCleanDate() > 0 {
+			if rec.GetRecord().GetMetadata().GetCategory() == rcpb.ReleaseMetadata_PRE_VALIDATE && rec.GetRecord().GetMetadata().GetLastCleanDate() == 0 {
 				return &pb.GetCleanResponse{InstanceId: id, Seen: sids}, nil
 			}
 		}
@@ -376,7 +376,7 @@ func (s *Server) GetCleanInternal(ctx context.Context, req *pb.GetCleanRequest) 
 			if err != nil {
 				return nil, err
 			}
-			if rec.GetRecord().GetMetadata().GetFiledUnder() == rcpb.ReleaseMetadata_FILE_12_INCH && rec.GetRecord().GetMetadata().GetLastCleanDate() > 0 {
+			if rec.GetRecord().GetMetadata().GetFiledUnder() == rcpb.ReleaseMetadata_FILE_12_INCH && rec.GetRecord().GetMetadata().GetLastCleanDate() == 0 {
 				return &pb.GetCleanResponse{InstanceId: id, Seen: sids}, nil
 			}
 		}
@@ -386,7 +386,7 @@ func (s *Server) GetCleanInternal(ctx context.Context, req *pb.GetCleanRequest) 
 			if err != nil {
 				return nil, err
 			}
-			if rec.GetRecord().GetMetadata().GetFiledUnder() == rcpb.ReleaseMetadata_FILE_7_INCH && rec.GetRecord().GetMetadata().GetLastCleanDate() > 0 {
+			if rec.GetRecord().GetMetadata().GetFiledUnder() == rcpb.ReleaseMetadata_FILE_7_INCH && rec.GetRecord().GetMetadata().GetLastCleanDate() == 0 {
 				return &pb.GetCleanResponse{InstanceId: id, Seen: sids}, nil
 			}
 		}

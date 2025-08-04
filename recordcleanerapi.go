@@ -10,7 +10,6 @@ import (
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 
-	ppb "github.com/brotherlogic/printer/proto"
 	pb "github.com/brotherlogic/recordcleaner/proto"
 	rcpb "github.com/brotherlogic/recordcollection/proto"
 	"github.com/prometheus/client_golang/prometheus"
@@ -186,19 +185,6 @@ func (s *Server) GetClean(ctx context.Context, req *pb.GetCleanRequest) (*pb.Get
 }
 
 func (s *Server) GetCleanInternal(ctx context.Context, req *pb.GetCleanRequest) (*pb.GetCleanResponse, error) {
-	if !req.GetPeek() {
-		conn, err := s.FDialServer(ctx, "printer")
-		if err != nil {
-			return nil, status.Errorf(codes.Unavailable, "printer is unavailable (%v), assuming office is on shutdown", err)
-		}
-		defer conn.Close()
-
-		pclient := ppb.NewPrintServiceClient(conn)
-		_, err = pclient.Ping(ctx, &ppb.PingRequest{})
-		if err != nil {
-			return nil, status.Errorf(codes.Unavailable, "printer is not online: %v", err)
-		}
-	}
 
 	config, err := s.loadConfig(ctx)
 	if err != nil {
@@ -206,16 +192,6 @@ func (s *Server) GetCleanInternal(ctx context.Context, req *pb.GetCleanRequest) 
 	}
 
 	s.CtxLog(ctx, fmt.Sprintf("SEEN %v so far", config.GetNonPreValidateClean()))
-
-	// Determine if we should even be cleaning
-	outOfBounds := false
-	if (time.Now().Weekday() == time.Friday && time.Since(time.Unix(config.GetLastRelevantClean(), 0)) < time.Hour) ||
-		((time.Now().Weekday() == time.Saturday || time.Now().Weekday() == time.Sunday) && time.Since(time.Unix(config.GetLastRelevantClean(), 0)) < time.Hour*3) ||
-		time.Now().Weekday() != time.Saturday && time.Now().Weekday() != time.Sunday && time.Now().Weekday() != time.Friday && time.Since(time.Unix(config.GetLastRelevantClean(), 0)) < time.Hour*18 {
-		outOfBounds = true
-	}
-
-	s.CtxLog(ctx, fmt.Sprintf("Last clean was %v, setting outOfBounds to %v", time.Unix(config.GetLastRelevantClean(), 0), outOfBounds))
 
 	waterCount := 0
 	filterCount := 0
@@ -272,11 +248,6 @@ func (s *Server) GetCleanInternal(ctx context.Context, req *pb.GetCleanRequest) 
 
 	if !req.GetIncludeSeen() && len(ids.GetInstanceIds()) == 0 {
 
-		// Don't send box picks at all
-		if time.Now().Hour() < 16 && time.Now().Weekday() != time.Saturday && time.Now().Weekday() != time.Sunday {
-			return nil, status.Errorf(codes.ResourceExhausted, "Nothing to clean currently")
-		}
-
 		if config.GetCurrentBoxPick() == 0 {
 			ids, err := client.QueryRecords(ctx, &rcpb.QueryRecordsRequest{Query: &rcpb.QueryRecordsRequest_FolderId{int32(TOGO_FOLDER)}})
 			if err != nil {
@@ -291,11 +262,9 @@ func (s *Server) GetCleanInternal(ctx context.Context, req *pb.GetCleanRequest) 
 				}
 				if rec.GetRecord().GetMetadata().GetFiledUnder() == rcpb.ReleaseMetadata_FILE_12_INCH {
 					if rec.GetRecord().GetMetadata().GetDateArrived() > 0 && rec.Record.GetMetadata().GetLastCleanDate() == 0 && rec.GetRecord().Metadata.GetGoalFolder() != 1782105 {
-						if config.GetNonPreValidateClean() < 1 || rec.GetRecord().GetMetadata().GetCategory() == rcpb.ReleaseMetadata_PRE_VALIDATE {
-							if rec.GetRecord().GetMetadata().GetLastCleanDate() > 0 {
-								s.CtxLog(ctx, fmt.Sprintf("Adding (%v): %v -> %v", id, config.GetNonPreValidateClean(), rec.GetRecord().GetMetadata().GetCategory()))
-								valids = append(valids, id)
-							}
+						if rec.GetRecord().GetMetadata().GetLastCleanDate() > 0 {
+							s.CtxLog(ctx, fmt.Sprintf("Adding (%v): %v -> %v", id, config.GetNonPreValidateClean(), rec.GetRecord().GetMetadata().GetCategory()))
+							valids = append(valids, id)
 						}
 					}
 				}
@@ -366,7 +335,7 @@ func (s *Server) GetCleanInternal(ctx context.Context, req *pb.GetCleanRequest) 
 			if err != nil {
 				return nil, err
 			}
-			if rec.GetRecord().GetMetadata().GetCategory() == rcpb.ReleaseMetadata_PRE_VALIDATE && rec.GetRecord().GetMetadata().GetLastCleanDate() == 0 {
+			if rec.GetRecord().GetMetadata().GetCategory() == rcpb.ReleaseMetadata_PRE_VALIDATE && time.Since(time.Unix(rec.GetRecord().GetMetadata().GetLastCleanDate(), 0)) > time.Hour*24*7 {
 				return &pb.GetCleanResponse{InstanceId: id, Seen: sids}, nil
 			}
 		}
@@ -376,7 +345,7 @@ func (s *Server) GetCleanInternal(ctx context.Context, req *pb.GetCleanRequest) 
 			if err != nil {
 				return nil, err
 			}
-			if rec.GetRecord().GetMetadata().GetFiledUnder() == rcpb.ReleaseMetadata_FILE_12_INCH && rec.GetRecord().GetMetadata().GetLastCleanDate() == 0 {
+			if rec.GetRecord().GetMetadata().GetFiledUnder() == rcpb.ReleaseMetadata_FILE_12_INCH && time.Since(time.Unix(rec.GetRecord().GetMetadata().GetLastCleanDate(), 0)) > time.Hour*24*7 {
 				return &pb.GetCleanResponse{InstanceId: id, Seen: sids}, nil
 			}
 		}
@@ -386,7 +355,7 @@ func (s *Server) GetCleanInternal(ctx context.Context, req *pb.GetCleanRequest) 
 			if err != nil {
 				return nil, err
 			}
-			if rec.GetRecord().GetMetadata().GetFiledUnder() == rcpb.ReleaseMetadata_FILE_7_INCH && rec.GetRecord().GetMetadata().GetLastCleanDate() == 0 {
+			if rec.GetRecord().GetMetadata().GetFiledUnder() == rcpb.ReleaseMetadata_FILE_7_INCH && time.Since(time.Unix(rec.GetRecord().GetMetadata().GetLastCleanDate(), 0)) > time.Hour*24*7 {
 				return &pb.GetCleanResponse{InstanceId: id, Seen: sids}, nil
 			}
 		}

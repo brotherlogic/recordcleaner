@@ -329,40 +329,37 @@ func (s *Server) GetCleanInternal(ctx context.Context, req *pb.GetCleanRequest) 
 	//		return nil, status.Errorf(codes.ResourceExhausted, "you've cleaned %v records today, that be plenty", config.GetDayCount())
 	//	}
 
-	if config.GetNonPreValidateClean() > 1 {
-		s.CtxLog(ctx, fmt.Sprintf("Choosing loose option"))
-		for _, id := range ids.GetInstanceIds() {
-			rec, err := client.GetRecord(ctx, &rcpb.GetRecordRequest{InstanceId: id})
-			if err != nil {
-				return nil, err
-			}
-			if rec.GetRecord().GetMetadata().GetCategory() == rcpb.ReleaseMetadata_PRE_VALIDATE && time.Since(time.Unix(rec.GetRecord().GetMetadata().GetLastCleanDate(), 0)) > time.Hour*24*7 {
-				return &pb.GetCleanResponse{InstanceId: id, Seen: sids}, nil
-			}
+	s.CtxLog(ctx, fmt.Sprintf("Choosing loose option"))
+	for _, id := range ids.GetInstanceIds() {
+		rec, err := client.GetRecord(ctx, &rcpb.GetRecordRequest{InstanceId: id})
+		if err != nil {
+			return nil, err
 		}
-
-		for _, id := range ids.GetInstanceIds() {
-			rec, err := client.GetRecord(ctx, &rcpb.GetRecordRequest{InstanceId: id})
-			if err != nil {
-				return nil, err
-			}
-			if rec.GetRecord().GetMetadata().GetFiledUnder() == rcpb.ReleaseMetadata_FILE_12_INCH && time.Since(time.Unix(rec.GetRecord().GetMetadata().GetLastCleanDate(), 0)) > time.Hour*24*7 {
-				return &pb.GetCleanResponse{InstanceId: id, Seen: sids}, nil
-			}
+		if rec.GetRecord().GetMetadata().GetCategory() == rcpb.ReleaseMetadata_PRE_VALIDATE && time.Since(time.Unix(rec.GetRecord().GetMetadata().GetLastCleanDate(), 0)) > time.Hour*24*7 {
+			return &pb.GetCleanResponse{InstanceId: id, Seen: sids}, nil
 		}
-
-		for _, id := range ids.GetInstanceIds() {
-			rec, err := client.GetRecord(ctx, &rcpb.GetRecordRequest{InstanceId: id})
-			if err != nil {
-				return nil, err
-			}
-			if rec.GetRecord().GetMetadata().GetFiledUnder() == rcpb.ReleaseMetadata_FILE_7_INCH && time.Since(time.Unix(rec.GetRecord().GetMetadata().GetLastCleanDate(), 0)) > time.Hour*24*7 {
-				return &pb.GetCleanResponse{InstanceId: id, Seen: sids}, nil
-			}
-		}
-
-		return nil, status.Errorf(codes.ResourceExhausted, "Nothing to clean")
 	}
 
-	return &pb.GetCleanResponse{InstanceId: ids.GetInstanceIds()[0], Seen: sids}, nil
+	for _, id := range ids.GetInstanceIds() {
+		rec, err := client.GetRecord(ctx, &rcpb.GetRecordRequest{InstanceId: id})
+		if err != nil {
+			return nil, err
+		}
+		if rec.GetRecord().GetMetadata().GetFiledUnder() == rcpb.ReleaseMetadata_FILE_12_INCH && time.Since(time.Unix(rec.GetRecord().GetMetadata().GetLastCleanDate(), 0)) > time.Hour*24*7 {
+			return &pb.GetCleanResponse{InstanceId: id, Seen: sids}, nil
+		}
+	}
+
+	for _, id := range ids.GetInstanceIds() {
+		rec, err := client.GetRecord(ctx, &rcpb.GetRecordRequest{InstanceId: id})
+		if err != nil {
+			return nil, err
+		}
+		if rec.GetRecord().GetMetadata().GetFiledUnder() == rcpb.ReleaseMetadata_FILE_7_INCH && time.Since(time.Unix(rec.GetRecord().GetMetadata().GetLastCleanDate(), 0)) > time.Hour*24*7 {
+			return &pb.GetCleanResponse{InstanceId: id, Seen: sids}, nil
+		}
+	}
+
+	return nil, status.Errorf(codes.ResourceExhausted, "Nothing to clean")
+
 }

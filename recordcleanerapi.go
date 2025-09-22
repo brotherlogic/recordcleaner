@@ -235,7 +235,7 @@ func (s *Server) GetCleanInternal(ctx context.Context, req *pb.GetCleanRequest) 
 		return nil, status.Errorf(codes.ResourceExhausted, "Nothing to clean")
 	}
 
-	s.CtxLog(ctx, fmt.Sprintf("Queried %v -> found %v -> %v", TOGO_FOLDER, len(ids.GetInstanceIds()), ids))
+	s.CtxLog(ctx, fmt.Sprintf("Box pick %v Queried %v -> found %v -> %v", config.GetCurrentBoxPick(), TOGO_FOLDER, len(ids.GetInstanceIds()), ids))
 
 	sort.SliceStable(ids.InstanceIds, func(i, j int) bool {
 		return ids.InstanceIds[i] > ids.InstanceIds[j]

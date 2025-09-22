@@ -330,6 +330,7 @@ func (s *Server) GetCleanInternal(ctx context.Context, req *pb.GetCleanRequest) 
 	//	}
 
 	if config.GetNonPreValidateClean() > 1 {
+		s.CtxLog(ctx, fmt.Sprintf("Choosing loose option"))
 		for _, id := range ids.GetInstanceIds() {
 			rec, err := client.GetRecord(ctx, &rcpb.GetRecordRequest{InstanceId: id})
 			if err != nil {

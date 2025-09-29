@@ -198,7 +198,8 @@ func (s *Server) GetCleanInternal(ctx context.Context, req *pb.GetCleanRequest) 
 	waterCount := 0
 	filterCount := 0
 	yearDayCount := 0
-	for _, date := range config.GetLastCleanTime() {
+	sevens := 0
+	for id, date := range config.GetLastCleanTime() {
 		if date > int64(config.GetLastWater()) {
 			waterCount++
 		}
@@ -207,6 +208,9 @@ func (s *Server) GetCleanInternal(ctx context.Context, req *pb.GetCleanRequest) 
 		}
 		if time.Unix(date, 0).YearDay() == time.Now().YearDay() && time.Unix(date, 0).Year() == time.Now().Year() {
 			yearDayCount++
+			if config.GetDayCategoryCount()[id] == "FILE_7_INCH" {
+				sevens++
+			}
 		}
 	}
 	water.Set(float64(waterCount))
@@ -348,13 +352,15 @@ func (s *Server) GetCleanInternal(ctx context.Context, req *pb.GetCleanRequest) 
 		}
 	}
 
-	for _, id := range ids.GetInstanceIds() {
-		rec, err := client.GetRecord(ctx, &rcpb.GetRecordRequest{InstanceId: id})
-		if err != nil {
-			return nil, err
-		}
-		if rec.GetRecord().GetMetadata().GetFiledUnder() == rcpb.ReleaseMetadata_FILE_7_INCH && time.Since(time.Unix(rec.GetRecord().GetMetadata().GetLastCleanDate(), 0)) > time.Hour*24*7 {
-			return &pb.GetCleanResponse{InstanceId: id, Seen: sids}, nil
+	if sevens < 10 {
+		for _, id := range ids.GetInstanceIds() {
+			rec, err := client.GetRecord(ctx, &rcpb.GetRecordRequest{InstanceId: id})
+			if err != nil {
+				return nil, err
+			}
+			if rec.GetRecord().GetMetadata().GetFiledUnder() == rcpb.ReleaseMetadata_FILE_7_INCH && time.Since(time.Unix(rec.GetRecord().GetMetadata().GetLastCleanDate(), 0)) > time.Hour*24*7 {
+				return &pb.GetCleanResponse{InstanceId: id, Seen: sids}, nil
+			}
 		}
 	}
 

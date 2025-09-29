@@ -324,10 +324,6 @@ func (s *Server) GetCleanInternal(ctx context.Context, req *pb.GetCleanRequest) 
 		return nil, err
 	}
 	s.CtxLog(ctx, fmt.Sprintf("Failing %v and %v with %v", rec.GetRecord().GetMetadata().GetCategory(), yearDayCount, config.GetNonPreValidateClean()))
-	//if rec.GetRecord().GetMetadata().GetCategory() != rcpb.ReleaseMetadata_PRE_VALIDATE &&
-	//	outOfBounds {
-	//		return nil, status.Errorf(codes.ResourceExhausted, "you've cleaned %v records today, that be plenty", config.GetDayCount())
-	//	}
 
 	s.CtxLog(ctx, fmt.Sprintf("Choosing loose option"))
 	for _, id := range ids.GetInstanceIds() {

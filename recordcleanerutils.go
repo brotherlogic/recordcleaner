@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"time"
 
 	pb "github.com/brotherlogic/recordcleaner/proto"
@@ -14,7 +15,7 @@ const (
 	TOGO_FOLDER = 3282985
 )
 
-func (s *Server) metrics(config *pb.Config) {
+func (s *Server) metrics(ctx context.Context, config *pb.Config) {
 	if config.GetLastCleanTime() == nil {
 		return
 	}
@@ -26,12 +27,14 @@ func (s *Server) metrics(config *pb.Config) {
 	total := len(config.GetLastCleanTime())
 	done := 0
 	today := 0
-	for _, date := range config.GetLastCleanTime() {
+	for id, date := range config.GetLastCleanTime() {
 		if date > 0 {
 			done++
 		}
 		if time.Unix(date, 0).YearDay() == time.Now().YearDay() && time.Unix(date, 0).Year() == time.Now().Year() {
 			today++
+		} else {
+			s.CtxLog(ctx, fmt.Sprintf("%v was cleaned on %v", id, time.Unix(date, 0)))
 		}
 	}
 
@@ -107,7 +110,7 @@ func (s *Server) newClean(ctx context.Context, rec *rcpb.Record) (*pb.Config, er
 	config.DayCount++
 	config.GetLastCleanTime()[rec.GetRelease().GetInstanceId()] = rec.GetMetadata().GetLastCleanDate()
 
-	s.metrics(config)
+	s.metrics(ctx, config)
 
 	return config, s.saveConfig(ctx, config)
 }

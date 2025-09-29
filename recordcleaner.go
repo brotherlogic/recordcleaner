@@ -78,7 +78,7 @@ func (s *Server) loadConfig(ctx context.Context) (*pb.Config, error) {
 		config.LastCleanTime = make(map[int32]int64)
 	}
 
-	s.metrics(config)
+	s.metrics(ctx, config)
 
 	return config, nil
 }
@@ -105,7 +105,7 @@ func (s *Server) saveConfig(ctx context.Context, config *pb.Config) error {
 		return fmt.Errorf("could not get write consensus (%v)", res.GetConsensus())
 	}
 
-	s.metrics(config)
+	s.metrics(ctx, config)
 
 	return nil
 }

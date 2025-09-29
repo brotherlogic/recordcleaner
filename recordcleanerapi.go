@@ -52,8 +52,10 @@ func (s *Server) ClientUpdate(ctx context.Context, in *rcpb.ClientUpdateRequest)
 		return nil, err
 	}
 
-	if config.GetLastCleanTime() == nil {
-		config.LastCleanTime = make(map[int32]int64)
+	rec, err := s.getRecord(ctx, in.GetInstanceId())
+	if err == nil {
+		config.LastCleanTime[in.GetInstanceId()] = rec.GetMetadata().GetLastCleanDate()
+		config.DayCategoryCount[in.GetInstanceId()] = fmt.Sprintf("%v", rec.GetMetadata().GetFiledUnder())
 	}
 
 	if config.GetCurrentBoxPick() == in.GetInstanceId() {

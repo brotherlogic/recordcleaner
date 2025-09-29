@@ -15,7 +15,7 @@ message Config {
   int32 day_count = 6;
 
   int32 current_box_pick = 7;
-  map<string, int64> day_category_count = 8;
+  map<int32, string> day_category_count = 8;
 
   int64 last_relevant_clean = 9;
   int32 non_pre_validate_clean = 10;

@@ -39,6 +39,10 @@ var (
 		Name: "recordcleaner_today",
 		Help: "The size of the print queue",
 	})
+	cleanedTodayCat = promauto.NewGaugeVec(prometheus.GaugeOpts{
+		Name: "recordcleaner_today_cat",
+		Help: "The size of the print queue",
+	}, []string{"category"})
 )
 
 // Server main server type
@@ -76,6 +80,9 @@ func (s *Server) loadConfig(ctx context.Context) (*pb.Config, error) {
 	}
 	if config.GetLastCleanTime() == nil {
 		config.LastCleanTime = make(map[int32]int64)
+	}
+	if config.GetDayCategoryCount() == nil {
+		config.DayCategoryCount = map[int32]string{}
 	}
 
 	s.metrics(ctx, config)

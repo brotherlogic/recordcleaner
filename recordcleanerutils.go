@@ -27,12 +27,14 @@ func (s *Server) metrics(ctx context.Context, config *pb.Config) {
 	total := len(config.GetLastCleanTime())
 	done := 0
 	today := 0
+	cat := make(map[string]float64)
 	for id, date := range config.GetLastCleanTime() {
 		if date > 0 {
 			done++
 		}
 		if time.Unix(date, 0).YearDay() == time.Now().YearDay() && time.Unix(date, 0).Year() == time.Now().Year() {
 			today++
+			cat[config.GetDayCategoryCount()[id]]++
 		} else {
 			s.CtxLog(ctx, fmt.Sprintf("%v was cleaned on %v", id, time.Unix(date, 0)))
 		}
@@ -41,6 +43,9 @@ func (s *Server) metrics(ctx context.Context, config *pb.Config) {
 	tracked.Set(float64(total))
 	cleaned.Set(float64(done))
 	cleanedToday.Set(float64(today))
+	for cate, cnt := range cat {
+		cleanedTodayCat.WithLabelValues(cate).Set(cnt)
+	}
 
 	cleanedLastSeven := 0
 	for _, date := range config.GetLastCleanTime() {
@@ -109,6 +114,7 @@ func (s *Server) newClean(ctx context.Context, rec *rcpb.Record) (*pb.Config, er
 	config.CurrentCount++
 	config.DayCount++
 	config.GetLastCleanTime()[rec.GetRelease().GetInstanceId()] = rec.GetMetadata().GetLastCleanDate()
+	config.GetDayCategoryCount()[rec.GetRelease().GetInstanceId()] = fmt.Sprintf("%v", rec.GetMetadata().GetFiledUnder())
 
 	s.metrics(ctx, config)
 

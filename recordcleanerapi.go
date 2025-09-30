@@ -53,12 +53,11 @@ func (s *Server) ClientUpdate(ctx context.Context, in *rcpb.ClientUpdateRequest)
 	}
 
 	rec, err := s.getRecord(ctx, in.GetInstanceId())
-	if err == nil {
+	if err == nil && rec.GetMetadata().GetLastCleanDate() != config.LastCleanTime[in.GetInstanceId()] {
 		config.LastCleanTime[in.GetInstanceId()] = rec.GetMetadata().GetLastCleanDate()
 		config.DayCategoryCount[in.GetInstanceId()] = fmt.Sprintf("%v", rec.GetMetadata().GetFiledUnder())
-		s.CtxLog(ctx, fmt.Sprintf("Updated %v to %v", in.GetInstanceId(), rec.GetMetadata().GetLastCleanDate()))
-	} else {
-		s.CtxLog(ctx, fmt.Sprintf("%v failed: %v", in, err))
+		err := s.saveConfig(ctx, config)
+		s.CtxLog(ctx, fmt.Sprintf("Updated %v to %v -> %v", in.GetInstanceId(), rec.GetMetadata().GetLastCleanDate(), err))
 	}
 
 	if config.GetCurrentBoxPick() == in.GetInstanceId() {

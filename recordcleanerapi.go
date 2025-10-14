@@ -354,7 +354,7 @@ func (s *Server) GetCleanInternal(ctx context.Context, req *pb.GetCleanRequest) 
 		}
 	}
 
-	if sevens < 16 {
+	if sevens < 20 {
 		for _, id := range ids.GetInstanceIds() {
 			rec, err := client.GetRecord(ctx, &rcpb.GetRecordRequest{InstanceId: id})
 			if err != nil {

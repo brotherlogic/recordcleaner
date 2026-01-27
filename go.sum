@@ -42,6 +42,8 @@ github.com/brotherlogic/recordcollection v0.0.0-20250722141022-d09a67a16bb5 h1:R
 github.com/brotherlogic/recordcollection v0.0.0-20250722141022-d09a67a16bb5/go.mod h1:NnhvH//ryqGgwgMfI9OXqouzrsSQ9VeYoyUuqxhYH+E=
 github.com/brotherlogic/recordcollection v0.0.0-20260114215751-9dcd4d4ada8b h1:3pGmaJnI7NqNhMNLlcqd6lQcl69k6c5uVcuCAyP/6uw=
 github.com/brotherlogic/recordcollection v0.0.0-20260114215751-9dcd4d4ada8b/go.mod h1:NnhvH//ryqGgwgMfI9OXqouzrsSQ9VeYoyUuqxhYH+E=
+github.com/brotherlogic/recordcollection v0.0.0-20260126190109-46fbe737c029 h1:IahmMJLrlu3foFySaeMru8R4Y9uc/IjkM+zehOtju1I=
+github.com/brotherlogic/recordcollection v0.0.0-20260126190109-46fbe737c029/go.mod h1:nLwPmiI/3q1qwWJx/+DXCSF/TYLMv6RXor68/2udGBQ=
 github.com/brotherlogic/versionserver v0.0.0-20221025154054-c9bcd41be2f2 h1:YjFE4Sa+wwbl4yJwJaMQVeA4CMzLIDbbIuSMdsEp5/w=
 github.com/brotherlogic/versionserver v0.0.0-20221025154054-c9bcd41be2f2/go.mod h1:ODrbMDhG+yOp2vie9vE4oaKsKhILDralZMr7PJ4HrJY=
 github.com/cespare/xxhash/v2 v2.3.0 h1:UL815xU9SqsFlibzuggzjXhog7bL6oX9BbNZnL2UFvs=
@@ -118,6 +120,8 @@ google.golang.org/genproto/googleapis/rpc v0.0.0-20250811230008-5f3141c8851a h1:
 google.golang.org/genproto/googleapis/rpc v0.0.0-20250811230008-5f3141c8851a/go.mod h1:gw1tLEfykwDz2ET4a12jcXt4couGAm7IwsVaTy0Sflo=
 google.golang.org/genproto/googleapis/rpc v0.0.0-20260122232226-8e98ce8d340d h1:xXzuihhT3gL/ntduUZwHECzAn57E8dA6l8SOtYWdD8Q=
 google.golang.org/genproto/googleapis/rpc v0.0.0-20260122232226-8e98ce8d340d/go.mod h1:j9x/tPzZkyxcgEFkiKEEGxfvyumM01BEtsW8xzOahRQ=
+google.golang.org/genproto/googleapis/rpc v0.0.0-20260126211449-d11affda4bed h1:Yyog7dFpq0nVFnxj1NymkvC4RDIzc7KILL6vNAgLbCs=
+google.golang.org/genproto/googleapis/rpc v0.0.0-20260126211449-d11affda4bed/go.mod h1:j9x/tPzZkyxcgEFkiKEEGxfvyumM01BEtsW8xzOahRQ=
 google.golang.org/grpc v1.74.2 h1:WoosgB65DlWVC9FqI82dGsZhWFNBSLjQ84bjROOpMu4=
 google.golang.org/grpc v1.74.2/go.mod h1:CtQ+BGjaAIXHs/5YS3i473GqwBBa1zGQNevxdeBEXrM=
 google.golang.org/grpc v1.78.0 h1:K1XZG/yGDJnzMdd/uZHAkVqJE+xIDOcmdSFZkBUicNc=

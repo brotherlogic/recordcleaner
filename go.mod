@@ -6,7 +6,7 @@ require (
 	github.com/brotherlogic/dstore v0.0.0-20250613140516-5b29ccb83705
 	github.com/brotherlogic/godiscogs v0.0.0-20250429182651-404c7473edf8
 	github.com/brotherlogic/goserver v0.0.0-20260125051706-82df7bec125f
-	github.com/brotherlogic/recordcollection v0.0.0-20260114215751-9dcd4d4ada8b
+	github.com/brotherlogic/recordcollection v0.0.0-20260126190109-46fbe737c029
 	github.com/golang/protobuf v1.5.4
 	github.com/prometheus/client_golang v1.23.2
 	golang.org/x/net v0.49.0
@@ -37,5 +37,5 @@ require (
 	go.yaml.in/yaml/v2 v2.4.3 // indirect
 	golang.org/x/sys v0.40.0 // indirect
 	golang.org/x/text v0.33.0 // indirect
-	google.golang.org/genproto/googleapis/rpc v0.0.0-20260122232226-8e98ce8d340d // indirect
+	google.golang.org/genproto/googleapis/rpc v0.0.0-20260126211449-d11affda4bed // indirect
 )

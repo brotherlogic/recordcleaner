@@ -35,8 +35,6 @@ func (s *Server) metrics(ctx context.Context, config *pb.Config) {
 		if time.Unix(date, 0).YearDay() == time.Now().YearDay() && time.Unix(date, 0).Year() == time.Now().Year() {
 			today++
 			cat[config.GetDayCategoryCount()[id]]++
-		} else {
-			s.CtxLog(ctx, fmt.Sprintf("%v was cleaned on %v", id, time.Unix(date, 0)))
 		}
 	}
 

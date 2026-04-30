@@ -248,6 +248,17 @@ func (s *Server) GetCleanInternal(ctx context.Context, req *pb.GetCleanRequest) 
 		return nil, err
 	}
 
+	if config.GetOutOfSleeves() {
+		var nids []int32
+		for _, id := range ids.GetInstanceIds() {
+			rec, err := client.GetRecord(ctx, &rcpb.GetRecordRequest{InstanceId: id})
+			if err == nil && rec.GetRecord().GetMetadata().GetLastCleanDate() > 0 {
+				nids = append(nids, id)
+			}
+		}
+		ids.InstanceIds = nids
+	}
+
 	if len(ids.GetInstanceIds()) == 0 && req.GetOnlyEssential() {
 		return nil, status.Errorf(codes.ResourceExhausted, "Nothing to clean")
 	}

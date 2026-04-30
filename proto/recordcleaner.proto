@@ -19,6 +19,7 @@ message Config {
 
   int64 last_relevant_clean = 9;
   int32 non_pre_validate_clean = 10;
+  bool out_of_sleeves = 11;
 }
 
 message GetCleanRequest {
@@ -35,6 +36,8 @@ message GetCleanResponse {
 message ServiceRequest {
   bool water = 1;
   bool fileter = 2;
+  bool out_of_sleeves = 3;
+  bool new_sleeves = 4;
 }
 
 message ServiceResponse {}

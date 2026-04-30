@@ -56,6 +56,11 @@ func (s *Server) metrics(ctx context.Context, config *pb.Config) {
 }
 
 func (s *Server) triggerMetrics(ctx context.Context) error {
+	config, err := s.loadConfig(ctx)
+	if err != nil {
+		return err
+	}
+
 	conn, err := s.FDialServer(ctx, "recordcollection")
 	if err != nil {
 		return err
@@ -75,8 +80,15 @@ func (s *Server) triggerMetrics(ctx context.Context) error {
 		if err != nil {
 			return err
 		}
-		if rec.Record.GetMetadata().GetLastCleanDate() == 0 && rec.GetRecord().Metadata.GetGoalFolder() != 1782105 {
-			valids = append(valids, id)
+
+		if config.GetOutOfSleeves() {
+			if rec.GetRecord().GetMetadata().GetLastCleanDate() > 0 && rec.GetRecord().Metadata.GetGoalFolder() != 1782105 {
+				valids = append(valids, id)
+			}
+		} else {
+			if rec.GetRecord().GetMetadata().GetLastCleanDate() == 0 && rec.GetRecord().Metadata.GetGoalFolder() != 1782105 {
+				valids = append(valids, id)
+			}
 		}
 	}
 

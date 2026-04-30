@@ -92,5 +92,11 @@ func main() {
 	case "filter":
 		res, err := lclient.Service(ctx, &pb.ServiceRequest{Fileter: true})
 		fmt.Printf("Filtered: %v and %v\n", res, err)
+	case "outsleeves":
+		res, err := lclient.Service(ctx, &pb.ServiceRequest{OutOfSleeves: true})
+		fmt.Printf("Out of sleeves: %v and %v\n", res, err)
+	case "newsleeves":
+		res, err := lclient.Service(ctx, &pb.ServiceRequest{NewSleeves: true})
+		fmt.Printf("New sleeves: %v and %v\n", res, err)
 	}
 }

@@ -164,6 +164,15 @@ func (s *Server) Service(ctx context.Context, req *pb.ServiceRequest) (*pb.Servi
 		config.LastWater = time.Now().Unix()
 	}
 
+	if req.GetOutOfSleeves() {
+		config.OutOfSleeves = true
+		config.CurrentBoxPick = 0
+	}
+
+	if req.GetNewSleeves() {
+		config.OutOfSleeves = false
+	}
+
 	return &pb.ServiceResponse{}, s.saveConfig(ctx, config)
 }
 
@@ -269,10 +278,17 @@ func (s *Server) GetCleanInternal(ctx context.Context, req *pb.GetCleanRequest) 
 					return nil, err
 				}
 				if rec.GetRecord().GetMetadata().GetFiledUnder() == rcpb.ReleaseMetadata_FILE_12_INCH {
-					if rec.GetRecord().GetMetadata().GetDateArrived() > 0 && rec.Record.GetMetadata().GetLastCleanDate() == 0 && rec.GetRecord().Metadata.GetGoalFolder() != 1782105 {
-						if rec.GetRecord().GetMetadata().GetLastCleanDate() > 0 {
-							s.CtxLog(ctx, fmt.Sprintf("Adding (%v): %v -> %v", id, config.GetNonPreValidateClean(), rec.GetRecord().GetMetadata().GetCategory()))
-							valids = append(valids, id)
+					if rec.GetRecord().GetMetadata().GetDateArrived() > 0 && rec.GetRecord().Metadata.GetGoalFolder() != 1782105 {
+						if config.GetOutOfSleeves() {
+							if rec.GetRecord().GetMetadata().GetLastCleanDate() > 0 {
+								s.CtxLog(ctx, fmt.Sprintf("Adding (%v): %v -> %v", id, config.GetNonPreValidateClean(), rec.GetRecord().GetMetadata().GetCategory()))
+								valids = append(valids, id)
+							}
+						} else {
+							if rec.GetRecord().GetMetadata().GetLastCleanDate() == 0 {
+								s.CtxLog(ctx, fmt.Sprintf("Adding (%v): %v -> %v", id, config.GetNonPreValidateClean(), rec.GetRecord().GetMetadata().GetCategory()))
+								valids = append(valids, id)
+							}
 						}
 					}
 				}

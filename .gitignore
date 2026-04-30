@@ -1,2 +1,3 @@
 recordcleaner
 recordcleaner_cli/recordcleaner_cli
+.devcontainer/.env.auth

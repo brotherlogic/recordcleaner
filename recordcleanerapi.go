@@ -368,7 +368,7 @@ func (s *Server) GetCleanInternal(ctx context.Context, req *pb.GetCleanRequest) 
 		}
 
 		if config.GetOutOfSleeves() {
-			if rec.GetRecord().GetMetadata().GetLastCleanDate() > 0 && time.Since(time.Unix(rec.GetRecord().GetMetadata().GetLastCleanDate(), 0)) > time.Hour*24*7 {
+			if rec.GetRecord().GetMetadata().GetFiledUnder() == rcpb.ReleaseMetadata_FILE_12_INCH && rec.GetRecord().GetMetadata().GetLastCleanDate() > 0 && time.Since(time.Unix(rec.GetRecord().GetMetadata().GetLastCleanDate(), 0)) > time.Hour*24*7 {
 				return &pb.GetCleanResponse{InstanceId: id, Seen: sids}, nil
 			}
 		} else {

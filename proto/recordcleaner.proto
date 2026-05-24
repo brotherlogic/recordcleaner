@@ -5,7 +5,7 @@ package recordcleaner;
 option go_package = "github.com/brotherlogic/recordcleaner/proto";
 
 message Config {
-  map<int32, int64> last_clean_time = 1;
+  map<int64, int64> last_clean_time = 1;
   int32 current_count = 2;
   
   int64 last_water = 3;
@@ -14,11 +14,11 @@ message Config {
   int32 day_of_year = 5;
   int32 day_count = 6;
 
-  int32 current_box_pick = 7;
-  map<int32, string> day_category_count = 8;
+  int64 current_box_pick = 7;
+  map<int64, string> day_category_count = 8;
 
   int64 last_relevant_clean = 9;
-  int32 non_pre_validate_clean = 10;
+  int64 non_pre_validate_clean = 10;
   bool out_of_sleeves = 11;
 }
 
@@ -29,8 +29,8 @@ message GetCleanRequest {
 }
 
 message GetCleanResponse {
-  int32 instance_id = 1;
-  repeated int32 seen = 2;
+  int64 instance_id = 1;
+  repeated int64 seen = 2;
 }
 
 message ServiceRequest {

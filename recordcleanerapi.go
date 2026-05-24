@@ -249,7 +249,7 @@ func (s *Server) GetCleanInternal(ctx context.Context, req *pb.GetCleanRequest) 
 	}
 
 	if config.GetOutOfSleeves() {
-		var nids []int32
+		var nids []int64
 		for _, id := range ids.GetInstanceIds() {
 			rec, err := client.GetRecord(ctx, &rcpb.GetRecordRequest{InstanceId: id})
 			if err == nil && rec.GetRecord().GetMetadata().GetLastCleanDate() > 0 {
@@ -269,7 +269,7 @@ func (s *Server) GetCleanInternal(ctx context.Context, req *pb.GetCleanRequest) 
 		return ids.InstanceIds[i] > ids.InstanceIds[j]
 	})
 
-	var sids []int32
+	var sids []int64
 	for id := range config.GetLastCleanTime() {
 		sids = append(sids, id)
 	}
@@ -282,7 +282,7 @@ func (s *Server) GetCleanInternal(ctx context.Context, req *pb.GetCleanRequest) 
 				return nil, err
 			}
 
-			var valids []int32
+			var valids []int64
 			for _, id := range ids.GetInstanceIds() {
 				rec, err := client.GetRecord(ctx, &rcpb.GetRecordRequest{InstanceId: id})
 				if err != nil {
@@ -347,7 +347,7 @@ func (s *Server) GetCleanInternal(ctx context.Context, req *pb.GetCleanRequest) 
 		return &pb.GetCleanResponse{Seen: sids}, nil
 	}
 
-	var nids []int32
+	var nids []int64
 	for _, id := range ids.GetInstanceIds() {
 		nids = append(nids, id)
 	}

@@ -48,7 +48,7 @@ var (
 // Server main server type
 type Server struct {
 	*goserver.GoServer
-	lastUpdate map[int32]int64
+	lastUpdate map[int64]int64
 }
 
 func (s *Server) loadConfig(ctx context.Context) (*pb.Config, error) {
@@ -62,7 +62,7 @@ func (s *Server) loadConfig(ctx context.Context) (*pb.Config, error) {
 	res, err := client.Read(ctx, &dspb.ReadRequest{Key: CONFIG_KEY})
 	if err != nil {
 		if status.Convert(err).Code() == codes.InvalidArgument {
-			return &pb.Config{LastCleanTime: make(map[int32]int64)}, nil
+			return &pb.Config{LastCleanTime: make(map[int64]int64)}, nil
 		}
 
 		return nil, err
@@ -79,10 +79,10 @@ func (s *Server) loadConfig(ctx context.Context) (*pb.Config, error) {
 		return nil, err
 	}
 	if config.GetLastCleanTime() == nil {
-		config.LastCleanTime = make(map[int32]int64)
+		config.LastCleanTime = make(map[int64]int64)
 	}
 	if config.GetDayCategoryCount() == nil {
-		config.DayCategoryCount = map[int32]string{}
+		config.DayCategoryCount = map[int64]string{}
 	}
 
 	s.metrics(ctx, config)
@@ -121,13 +121,13 @@ func (s *Server) saveConfig(ctx context.Context, config *pb.Config) error {
 func Init() *Server {
 	s := &Server{
 		GoServer:   &goserver.GoServer{},
-		lastUpdate: make(map[int32]int64),
+		lastUpdate: make(map[int64]int64),
 	}
 
 	return s
 }
 
-func (s *Server) getRecord(ctx context.Context, iid int32) (*rcpb.Record, error) {
+func (s *Server) getRecord(ctx context.Context, iid int64) (*rcpb.Record, error) {
 	conn, err := s.FDialServer(ctx, "recordcollection")
 	if err != nil {
 		return nil, err
@@ -142,7 +142,7 @@ func (s *Server) getRecord(ctx context.Context, iid int32) (*rcpb.Record, error)
 	return r.GetRecord(), nil
 }
 
-func (s *Server) pingRecord(ctx context.Context, iid int32) {
+func (s *Server) pingRecord(ctx context.Context, iid int64) {
 	conn, err := s.FDialServer(ctx, "recordcollection")
 	if err != nil {
 		return

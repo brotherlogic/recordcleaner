@@ -74,7 +74,7 @@ func (s *Server) triggerMetrics(ctx context.Context) error {
 		return err
 	}
 
-	var valids []int32
+	var valids []int64
 	for _, id := range ids.GetInstanceIds() {
 		rec, err := client.GetRecord(ctx, &rcpb.GetRecordRequest{InstanceId: id})
 		if err != nil {

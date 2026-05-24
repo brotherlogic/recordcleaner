@@ -36,7 +36,7 @@ func main() {
 
 		if err := updateFlags.Parse(os.Args[2:]); err == nil {
 			if *id > 0 {
-				res, err := client.ClientUpdate(ctx, &pbrc.ClientUpdateRequest{InstanceId: int32(*id)})
+				res, err := client.ClientUpdate(ctx, &pbrc.ClientUpdateRequest{InstanceId: int64(*id)})
 				if err != nil {
 					log.Fatalf("Error on Add Record: %v", err)
 				}
@@ -64,7 +64,7 @@ func main() {
 			log.Fatalf("Error on Get Clean: %v (%v)", err, res)
 		}
 		for _, id := range res.GetSeen() {
-			res, err := client.ClientUpdate(ctx, &pbrc.ClientUpdateRequest{InstanceId: int32(id)})
+			res, err := client.ClientUpdate(ctx, &pbrc.ClientUpdateRequest{InstanceId: int64(id)})
 			fmt.Printf("Refresh %v and %v\n", res, err)
 		}
 	case "examine":

@@ -236,23 +236,17 @@ func (s *Server) GetCleanInternal(ctx context.Context, req *pb.GetCleanRequest) 
 		return nil, status.Errorf(codes.FailedPrecondition, "You need to change the filter, it was last done on %v", time.Unix(config.GetLastFilter(), 0))
 	}
 
-	conn, err := s.FDialServer(ctx, "recordcollection")
+	instanceIds, err := s.rc.queryRecords(ctx, int32(3386035))
 	if err != nil {
 		return nil, err
 	}
-	defer conn.Close()
-
-	client := rcpb.NewRecordCollectionServiceClient(conn)
-	ids, err := client.QueryRecords(ctx, &rcpb.QueryRecordsRequest{Query: &rcpb.QueryRecordsRequest_FolderId{int32(3386035)}})
-	if err != nil {
-		return nil, err
-	}
+	ids := &rcpb.QueryRecordsResponse{InstanceIds: instanceIds}
 
 	if config.GetOutOfSleeves() {
 		var nids []int64
 		for _, id := range ids.GetInstanceIds() {
-			rec, err := client.GetRecord(ctx, &rcpb.GetRecordRequest{InstanceId: id})
-			if err == nil && rec.GetRecord().GetMetadata().GetLastCleanDate() > 0 {
+			rec, err := s.rc.getRecord(ctx, id)
+			if err == nil && rec.GetMetadata().GetLastCleanDate() > 0 {
 				nids = append(nids, id)
 			}
 		}
@@ -277,27 +271,27 @@ func (s *Server) GetCleanInternal(ctx context.Context, req *pb.GetCleanRequest) 
 	if !req.GetIncludeSeen() && len(ids.GetInstanceIds()) == 0 {
 
 		if config.GetCurrentBoxPick() == 0 {
-			ids, err := client.QueryRecords(ctx, &rcpb.QueryRecordsRequest{Query: &rcpb.QueryRecordsRequest_FolderId{int32(TOGO_FOLDER)}})
+			togoIds, err := s.rc.queryRecords(ctx, int32(TOGO_FOLDER))
 			if err != nil {
 				return nil, err
 			}
 
 			var valids []int64
-			for _, id := range ids.GetInstanceIds() {
-				rec, err := client.GetRecord(ctx, &rcpb.GetRecordRequest{InstanceId: id})
+			for _, id := range togoIds {
+				rec, err := s.rc.getRecord(ctx, id)
 				if err != nil {
 					return nil, err
 				}
-				if rec.GetRecord().GetMetadata().GetFiledUnder() == rcpb.ReleaseMetadata_FILE_12_INCH {
-					if rec.GetRecord().GetMetadata().GetDateArrived() > 0 && rec.GetRecord().Metadata.GetGoalFolder() != 1782105 {
+				if rec.GetMetadata().GetFiledUnder() == rcpb.ReleaseMetadata_FILE_12_INCH {
+					if rec.GetMetadata().GetDateArrived() > 0 && rec.GetMetadata().GetGoalFolder() != 1782105 {
 						if config.GetOutOfSleeves() {
-							if rec.GetRecord().GetMetadata().GetLastCleanDate() > 0 {
-								s.CtxLog(ctx, fmt.Sprintf("Adding (%v): %v -> %v", id, config.GetNonPreValidateClean(), rec.GetRecord().GetMetadata().GetCategory()))
+							if rec.GetMetadata().GetLastCleanDate() > 0 {
+								s.CtxLog(ctx, fmt.Sprintf("Adding (%v): %v -> %v", id, config.GetNonPreValidateClean(), rec.GetMetadata().GetCategory()))
 								valids = append(valids, id)
 							}
 						} else {
-							if rec.GetRecord().GetMetadata().GetLastCleanDate() == 0 {
-								s.CtxLog(ctx, fmt.Sprintf("Adding (%v): %v -> %v", id, config.GetNonPreValidateClean(), rec.GetRecord().GetMetadata().GetCategory()))
+							if rec.GetMetadata().GetLastCleanDate() == 0 {
+								s.CtxLog(ctx, fmt.Sprintf("Adding (%v): %v -> %v", id, config.GetNonPreValidateClean(), rec.GetMetadata().GetCategory()))
 								valids = append(valids, id)
 							}
 						}
@@ -307,9 +301,9 @@ func (s *Server) GetCleanInternal(ctx context.Context, req *pb.GetCleanRequest) 
 
 			if len(valids) == 0 {
 				// Always be cleaning 45s
-				for _, id := range ids.GetInstanceIds() {
-					rec, err := client.GetRecord(ctx, &rcpb.GetRecordRequest{InstanceId: id})
-					if err == nil && rec.GetRecord().GetMetadata().GetFiledUnder() == rcpb.ReleaseMetadata_FILE_7_INCH {
+				for _, id := range togoIds {
+					rec, err := s.rc.getRecord(ctx, id)
+					if err == nil && rec.GetMetadata().GetFiledUnder() == rcpb.ReleaseMetadata_FILE_7_INCH {
 						return &pb.GetCleanResponse{InstanceId: id}, nil
 					}
 				}
@@ -325,18 +319,18 @@ func (s *Server) GetCleanInternal(ctx context.Context, req *pb.GetCleanRequest) 
 			}
 		}
 
-		rec, err := client.GetRecord(ctx, &rcpb.GetRecordRequest{InstanceId: config.CurrentBoxPick})
+		rec, err := s.rc.getRecord(ctx, config.CurrentBoxPick)
 		if err != nil {
 			return nil, err
 		}
 
-		if rec.GetRecord().GetMetadata().GetDateArrived() == 0 {
+		if rec.GetMetadata().GetDateArrived() == 0 {
 			config.CurrentBoxPick = 0
 			s.saveConfig(ctx, config)
 			return nil, status.Errorf(codes.InvalidArgument, "Refreshing box pick")
 		}
 
-		//if rec.GetRecord().GetMetadata().GetCategory() != rcpb.ReleaseMetadata_PRE_VALIDATE && outOfBounds {
+		//if rec.GetMetadata().GetCategory() != rcpb.ReleaseMetadata_PRE_VALIDATE && outOfBounds {
 		//	return nil, status.Errorf(codes.ResourceExhausted, "you've cleaned %v records today, that is plenty", yearDayCount)
 		//}
 
@@ -354,42 +348,42 @@ func (s *Server) GetCleanInternal(ctx context.Context, req *pb.GetCleanRequest) 
 	ids.InstanceIds = nids
 
 	chosen := ids.GetInstanceIds()[0]
-	rec, err := client.GetRecord(ctx, &rcpb.GetRecordRequest{InstanceId: chosen})
+	rec, err := s.rc.getRecord(ctx, chosen)
 	if err != nil {
 		return nil, err
 	}
-	s.CtxLog(ctx, fmt.Sprintf("Failing %v and %v with %v", rec.GetRecord().GetMetadata().GetCategory(), yearDayCount, config.GetNonPreValidateClean()))
+	s.CtxLog(ctx, fmt.Sprintf("Failing %v and %v with %v", rec.GetMetadata().GetCategory(), yearDayCount, config.GetNonPreValidateClean()))
 
 	s.CtxLog(ctx, fmt.Sprintf("Choosing loose option"))
 	for _, id := range ids.GetInstanceIds() {
-		rec, err := client.GetRecord(ctx, &rcpb.GetRecordRequest{InstanceId: id})
+		rec, err := s.rc.getRecord(ctx, id)
 		if err != nil {
 			return nil, err
 		}
 
 		if config.GetOutOfSleeves() {
-			if rec.GetRecord().GetMetadata().GetFiledUnder() == rcpb.ReleaseMetadata_FILE_12_INCH && rec.GetRecord().GetMetadata().GetLastCleanDate() > 0 && time.Since(time.Unix(rec.GetRecord().GetMetadata().GetLastCleanDate(), 0)) > time.Hour*24*7 {
+			if rec.GetMetadata().GetFiledUnder() == rcpb.ReleaseMetadata_FILE_12_INCH && rec.GetMetadata().GetLastCleanDate() > 0 && time.Since(time.Unix(rec.GetMetadata().GetLastCleanDate(), 0)) > time.Hour*24*7 {
 				return &pb.GetCleanResponse{InstanceId: id, Seen: sids}, nil
 			}
 		} else {
-			if rec.GetRecord().GetMetadata().GetCategory() == rcpb.ReleaseMetadata_PRE_VALIDATE && time.Since(time.Unix(rec.GetRecord().GetMetadata().GetLastCleanDate(), 0)) > time.Hour*24*7 {
+			if rec.GetMetadata().GetCategory() == rcpb.ReleaseMetadata_PRE_VALIDATE && time.Since(time.Unix(rec.GetMetadata().GetLastCleanDate(), 0)) > time.Hour*24*7 {
 				return &pb.GetCleanResponse{InstanceId: id, Seen: sids}, nil
 			}
 		}
 	}
 
 	for _, id := range ids.GetInstanceIds() {
-		rec, err := client.GetRecord(ctx, &rcpb.GetRecordRequest{InstanceId: id})
+		rec, err := s.rc.getRecord(ctx, id)
 		if err != nil {
 			return nil, err
 		}
 
 		if config.GetOutOfSleeves() {
-			if rec.GetRecord().GetMetadata().GetLastCleanDate() > 0 && time.Since(time.Unix(rec.GetRecord().GetMetadata().GetLastCleanDate(), 0)) > time.Hour*24*7 {
+			if rec.GetMetadata().GetLastCleanDate() > 0 && time.Since(time.Unix(rec.GetMetadata().GetLastCleanDate(), 0)) > time.Hour*24*7 {
 				return &pb.GetCleanResponse{InstanceId: id, Seen: sids}, nil
 			}
 		} else {
-			if rec.GetRecord().GetMetadata().GetFiledUnder() == rcpb.ReleaseMetadata_FILE_12_INCH && time.Since(time.Unix(rec.GetRecord().GetMetadata().GetLastCleanDate(), 0)) > time.Hour*24*7 {
+			if rec.GetMetadata().GetFiledUnder() == rcpb.ReleaseMetadata_FILE_12_INCH && time.Since(time.Unix(rec.GetMetadata().GetLastCleanDate(), 0)) > time.Hour*24*7 {
 				return &pb.GetCleanResponse{InstanceId: id, Seen: sids}, nil
 			}
 		}
@@ -397,17 +391,17 @@ func (s *Server) GetCleanInternal(ctx context.Context, req *pb.GetCleanRequest) 
 
 	if sevens < 20 {
 		for _, id := range ids.GetInstanceIds() {
-			rec, err := client.GetRecord(ctx, &rcpb.GetRecordRequest{InstanceId: id})
+			rec, err := s.rc.getRecord(ctx, id)
 			if err != nil {
 				return nil, err
 			}
 
 			if config.GetOutOfSleeves() {
-				if rec.GetRecord().GetMetadata().GetLastCleanDate() > 0 && time.Since(time.Unix(rec.GetRecord().GetMetadata().GetLastCleanDate(), 0)) > time.Hour*24*7 {
+				if rec.GetMetadata().GetLastCleanDate() > 0 && time.Since(time.Unix(rec.GetMetadata().GetLastCleanDate(), 0)) > time.Hour*24*7 {
 					return &pb.GetCleanResponse{InstanceId: id, Seen: sids}, nil
 				}
 			} else {
-				if rec.GetRecord().GetMetadata().GetFiledUnder() == rcpb.ReleaseMetadata_FILE_7_INCH && time.Since(time.Unix(rec.GetRecord().GetMetadata().GetLastCleanDate(), 0)) > time.Hour*24*7 {
+				if rec.GetMetadata().GetFiledUnder() == rcpb.ReleaseMetadata_FILE_7_INCH && time.Since(time.Unix(rec.GetMetadata().GetLastCleanDate(), 0)) > time.Hour*24*7 {
 					return &pb.GetCleanResponse{InstanceId: id, Seen: sids}, nil
 				}
 			}

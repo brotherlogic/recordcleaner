@@ -61,32 +61,24 @@ func (s *Server) triggerMetrics(ctx context.Context) error {
 		return err
 	}
 
-	conn, err := s.FDialServer(ctx, "recordcollection")
-	if err != nil {
-		return err
-	}
-	defer conn.Close()
-
-	client := rcpb.NewRecordCollectionServiceClient(conn)
-
-	ids, err := client.QueryRecords(ctx, &rcpb.QueryRecordsRequest{Query: &rcpb.QueryRecordsRequest_FolderId{int32(TOGO_FOLDER)}})
+	ids, err := s.rc.queryRecords(ctx, int32(TOGO_FOLDER))
 	if err != nil {
 		return err
 	}
 
 	var valids []int64
-	for _, id := range ids.GetInstanceIds() {
-		rec, err := client.GetRecord(ctx, &rcpb.GetRecordRequest{InstanceId: id})
+	for _, id := range ids {
+		rec, err := s.rc.getRecord(ctx, id)
 		if err != nil {
 			return err
 		}
 
 		if config.GetOutOfSleeves() {
-			if rec.GetRecord().GetMetadata().GetLastCleanDate() > 0 && rec.GetRecord().Metadata.GetGoalFolder() != 1782105 {
+			if rec.GetMetadata().GetLastCleanDate() > 0 && rec.GetMetadata().GetGoalFolder() != 1782105 {
 				valids = append(valids, id)
 			}
 		} else {
-			if rec.GetRecord().GetMetadata().GetLastCleanDate() == 0 && rec.GetRecord().Metadata.GetGoalFolder() != 1782105 {
+			if rec.GetMetadata().GetLastCleanDate() == 0 && rec.GetMetadata().GetGoalFolder() != 1782105 {
 				valids = append(valids, id)
 			}
 		}

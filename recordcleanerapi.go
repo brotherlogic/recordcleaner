@@ -197,6 +197,18 @@ func (s *Server) GetClean(ctx context.Context, req *pb.GetCleanRequest) (*pb.Get
 	return clean, err
 }
 
+func (s *Server) getCombinedPileWidth(ctx context.Context) (float32, error) {
+	listeningWidth, err := s.org.getLocationWidth(ctx, "12 Inch Listening Pile")
+	if err != nil {
+		return 0, err
+	}
+	holdingWidth, err := s.org.getLocationWidth(ctx, "12 Inch Holding Pile")
+	if err != nil {
+		return 0, err
+	}
+	return listeningWidth + holdingWidth, nil
+}
+
 func (s *Server) GetCleanInternal(ctx context.Context, req *pb.GetCleanRequest) (*pb.GetCleanResponse, error) {
 
 	config, err := s.loadConfig(ctx)
@@ -236,19 +248,35 @@ func (s *Server) GetCleanInternal(ctx context.Context, req *pb.GetCleanRequest) 
 		return nil, status.Errorf(codes.FailedPrecondition, "You need to change the filter, it was last done on %v", time.Unix(config.GetLastFilter(), 0))
 	}
 
+	combinedWidth, err := s.getCombinedPileWidth(ctx)
+	if err != nil {
+		return nil, err
+	}
+	overWidthLimit := combinedWidth > 700
+
 	instanceIds, err := s.rc.queryRecords(ctx, int32(3386035))
 	if err != nil {
 		return nil, err
 	}
 	ids := &rcpb.QueryRecordsResponse{InstanceIds: instanceIds}
 
-	if config.GetOutOfSleeves() {
+	if config.GetOutOfSleeves() || overWidthLimit {
 		var nids []int64
 		for _, id := range ids.GetInstanceIds() {
 			rec, err := s.rc.getRecord(ctx, id)
-			if err == nil && rec.GetMetadata().GetLastCleanDate() > 0 {
-				nids = append(nids, id)
+			if err != nil {
+				if overWidthLimit {
+					return nil, err
+				}
+				continue
 			}
+			if config.GetOutOfSleeves() && rec.GetMetadata().GetLastCleanDate() <= 0 {
+				continue
+			}
+			if overWidthLimit && rec.GetMetadata().GetFiledUnder() == rcpb.ReleaseMetadata_FILE_12_INCH && rec.GetMetadata().GetCategory() != rcpb.ReleaseMetadata_UNLISTENED {
+				continue
+			}
+			nids = append(nids, id)
 		}
 		ids.InstanceIds = nids
 	}
@@ -283,6 +311,9 @@ func (s *Server) GetCleanInternal(ctx context.Context, req *pb.GetCleanRequest) 
 					return nil, err
 				}
 				if rec.GetMetadata().GetFiledUnder() == rcpb.ReleaseMetadata_FILE_12_INCH {
+					if overWidthLimit && rec.GetMetadata().GetCategory() != rcpb.ReleaseMetadata_UNLISTENED {
+						continue
+					}
 					if rec.GetMetadata().GetDateArrived() > 0 && rec.GetMetadata().GetGoalFolder() != 1782105 {
 						if config.GetOutOfSleeves() {
 							if rec.GetMetadata().GetLastCleanDate() > 0 {

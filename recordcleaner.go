@@ -19,6 +19,7 @@ import (
 	"github.com/brotherlogic/goserver/utils"
 	pb "github.com/brotherlogic/recordcleaner/proto"
 	rcpb "github.com/brotherlogic/recordcollection/proto"
+	ropb "github.com/brotherlogic/recordsorganiser/proto"
 	google_protobuf "github.com/golang/protobuf/ptypes/any"
 )
 
@@ -45,21 +46,135 @@ var (
 	}, []string{"category"})
 )
 
-// Server main server type
-type Server struct {
-	*goserver.GoServer
-	lastUpdate map[int64]int64
+type organiserBridge interface {
+	getLocationWidth(ctx context.Context, name string) (float32, error)
 }
 
-func (s *Server) loadConfig(ctx context.Context) (*pb.Config, error) {
-	conn, err := s.FDialServer(ctx, "dstore")
+type recordCollectionBridge interface {
+	queryRecords(ctx context.Context, folderID int32) ([]int64, error)
+	getRecord(ctx context.Context, iid int64) (*rcpb.Record, error)
+	updateRecord(ctx context.Context, req *rcpb.UpdateRecordRequest) error
+}
+
+type dstoreBridge interface {
+	read(ctx context.Context, req *dspb.ReadRequest) (*dspb.ReadResponse, error)
+	write(ctx context.Context, req *dspb.WriteRequest) (*dspb.WriteResponse, error)
+}
+
+type prodOrganiser struct {
+	dial func(ctx context.Context, server string) (*grpc.ClientConn, error)
+}
+
+func (p *prodOrganiser) getLocationWidth(ctx context.Context, name string) (float32, error) {
+	conn, err := p.dial(ctx, "recordsorganiser")
+	if err != nil {
+		return 0, err
+	}
+	defer conn.Close()
+
+	client := ropb.NewOrganiserServiceClient(conn)
+	resp, err := client.GetOrganisation(ctx, &ropb.GetOrganisationRequest{
+		Locations: []*ropb.Location{{Name: name}},
+	})
+	if err != nil {
+		return 0, err
+	}
+	if len(resp.GetLocations()) == 0 {
+		return 0, status.Errorf(codes.NotFound, "location %v not found", name)
+	}
+
+	var total float32
+	for _, placement := range resp.GetLocations()[0].GetReleasesLocation() {
+		total += placement.GetDeterminedWidth()
+	}
+	return total, nil
+}
+
+type prodRecordCollection struct {
+	dial func(ctx context.Context, server string) (*grpc.ClientConn, error)
+}
+
+func (p *prodRecordCollection) queryRecords(ctx context.Context, folderID int32) ([]int64, error) {
+	conn, err := p.dial(ctx, "recordcollection")
+	if err != nil {
+		return nil, err
+	}
+	defer conn.Close()
+
+	client := rcpb.NewRecordCollectionServiceClient(conn)
+	resp, err := client.QueryRecords(ctx, &rcpb.QueryRecordsRequest{
+		Query: &rcpb.QueryRecordsRequest_FolderId{FolderId: folderID},
+	})
+	if err != nil {
+		return nil, err
+	}
+	return resp.GetInstanceIds(), nil
+}
+
+func (p *prodRecordCollection) getRecord(ctx context.Context, iid int64) (*rcpb.Record, error) {
+	conn, err := p.dial(ctx, "recordcollection")
+	if err != nil {
+		return nil, err
+	}
+	defer conn.Close()
+
+	client := rcpb.NewRecordCollectionServiceClient(conn)
+	resp, err := client.GetRecord(ctx, &rcpb.GetRecordRequest{InstanceId: iid})
+	if err != nil {
+		return nil, err
+	}
+	return resp.GetRecord(), nil
+}
+
+func (p *prodRecordCollection) updateRecord(ctx context.Context, req *rcpb.UpdateRecordRequest) error {
+	conn, err := p.dial(ctx, "recordcollection")
+	if err != nil {
+		return err
+	}
+	defer conn.Close()
+
+	client := rcpb.NewRecordCollectionServiceClient(conn)
+	_, err = client.UpdateRecord(ctx, req)
+	return err
+}
+
+type prodDstore struct {
+	dial func(ctx context.Context, server string) (*grpc.ClientConn, error)
+}
+
+func (p *prodDstore) read(ctx context.Context, req *dspb.ReadRequest) (*dspb.ReadResponse, error) {
+	conn, err := p.dial(ctx, "dstore")
 	if err != nil {
 		return nil, err
 	}
 	defer conn.Close()
 
 	client := dspb.NewDStoreServiceClient(conn)
-	res, err := client.Read(ctx, &dspb.ReadRequest{Key: CONFIG_KEY})
+	return client.Read(ctx, req)
+}
+
+func (p *prodDstore) write(ctx context.Context, req *dspb.WriteRequest) (*dspb.WriteResponse, error) {
+	conn, err := p.dial(ctx, "dstore")
+	if err != nil {
+		return nil, err
+	}
+	defer conn.Close()
+
+	client := dspb.NewDStoreServiceClient(conn)
+	return client.Write(ctx, req)
+}
+
+// Server main server type
+type Server struct {
+	*goserver.GoServer
+	lastUpdate map[int64]int64
+	org        organiserBridge
+	rc         recordCollectionBridge
+	dstore     dstoreBridge
+}
+
+func (s *Server) loadConfig(ctx context.Context) (*pb.Config, error) {
+	res, err := s.dstore.read(ctx, &dspb.ReadRequest{Key: CONFIG_KEY})
 	if err != nil {
 		if status.Convert(err).Code() == codes.InvalidArgument {
 			return &pb.Config{LastCleanTime: make(map[int64]int64)}, nil
@@ -91,19 +206,12 @@ func (s *Server) loadConfig(ctx context.Context) (*pb.Config, error) {
 }
 
 func (s *Server) saveConfig(ctx context.Context, config *pb.Config) error {
-	conn, err := s.FDialServer(ctx, "dstore")
-	if err != nil {
-		return err
-	}
-	defer conn.Close()
-
 	data, err := proto.Marshal(config)
 	if err != nil {
 		return err
 	}
 
-	client := dspb.NewDStoreServiceClient(conn)
-	res, err := client.Write(ctx, &dspb.WriteRequest{Key: CONFIG_KEY, Value: &google_protobuf.Any{Value: data}})
+	res, err := s.dstore.write(ctx, &dspb.WriteRequest{Key: CONFIG_KEY, Value: &google_protobuf.Any{Value: data}})
 	if err != nil {
 		return err
 	}
@@ -123,34 +231,19 @@ func Init() *Server {
 		GoServer:   &goserver.GoServer{},
 		lastUpdate: make(map[int64]int64),
 	}
+	s.org = &prodOrganiser{dial: s.FDialServer}
+	s.rc = &prodRecordCollection{dial: s.FDialServer}
+	s.dstore = &prodDstore{dial: s.FDialServer}
 
 	return s
 }
 
 func (s *Server) getRecord(ctx context.Context, iid int64) (*rcpb.Record, error) {
-	conn, err := s.FDialServer(ctx, "recordcollection")
-	if err != nil {
-		return nil, err
-	}
-	defer conn.Close()
-
-	client := rcpb.NewRecordCollectionServiceClient(conn)
-	r, err := client.GetRecord(ctx, &rcpb.GetRecordRequest{InstanceId: iid})
-	if err != nil {
-		return nil, err
-	}
-	return r.GetRecord(), nil
+	return s.rc.getRecord(ctx, iid)
 }
 
 func (s *Server) pingRecord(ctx context.Context, iid int64) {
-	conn, err := s.FDialServer(ctx, "recordcollection")
-	if err != nil {
-		return
-	}
-	defer conn.Close()
-
-	client := rcpb.NewRecordCollectionServiceClient(conn)
-	_, err = client.UpdateRecord(ctx, &rcpb.UpdateRecordRequest{Reason: "Pulling Gram", Update: &rcpb.Record{Release: &gdpb.Release{InstanceId: iid}, Metadata: &rcpb.ReleaseMetadata{NeedsGramUpdate: true}}})
+	err := s.rc.updateRecord(ctx, &rcpb.UpdateRecordRequest{Reason: "Pulling Gram", Update: &rcpb.Record{Release: &gdpb.Release{InstanceId: iid}, Metadata: &rcpb.ReleaseMetadata{NeedsGramUpdate: true}}})
 	if err == nil {
 		s.lastUpdate[iid] = time.Now().Unix()
 	}

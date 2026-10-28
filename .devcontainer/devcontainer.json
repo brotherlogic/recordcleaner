@@ -7,7 +7,10 @@
 	"features": {
 		"ghcr.io/devcontainers/features/go:1": {},
 		"ghcr.io/nils-geistmann/devcontainers-features/zsh:0": {},
-		"ghcr.io/devcontainers/features/github-cli:1": {},
+		"ghcr.io/devcontainers/features/github-cli:1": {
+			"version": "latest",
+			"installDirectlyFromGitHubRelease": true
+		},
 		"ghcr.io/siri404/devcontainer-ai-features/gemini-cli:1": {},
 		"ghcr.io/devcontainers/features/common-utils": "2",
 		"ghcr.io/devcontainers-extra/features/protoc:1": {}
@@ -23,17 +26,20 @@
 	// "remoteUser": "root"
 	"workspaceFolder": "/workspaces/recordcleaner",
 	"workingDir": "/workspaces/recordcleaner",
-	"initializeCommand": "echo \"GH_TOKEN=$(gh auth token)\" > .devcontainer/.env.auth",
+	"initializeCommand": "cat ~/.seraphine-automation > .devcontainer/.env.auth",
+	"remoteOTEL.enabled": true,
+	"forwardPorts": [],
 	"runArgs": [
 		"--security-opt",
-	    "label=disable",
-	    "--network=host",
-	    "--env-file",
+		"label=disable",
+		"--network=host",
+		"--env-file",
 		"${localWorkspaceFolder}/.devcontainer/.env.auth"
 	],
 	"containerEnv": {
-	    "GH_GIT_PROTOCOL": "ssh",
-	    "LANG": "en_US.UTF-8",
+		"GH_GIT_PROTOCOL": "ssh",
+		"DBUS_SESSION_BUS_ADDRESS": "unix:path=/run/user/1000/bus",
+		"LANG": "en_US.UTF-8",
 		"LC_ALL": "en_US.UTF-8",
 		"TZ": "America/Los_Angeles"
 	},
@@ -44,8 +50,8 @@
 			"type": "bind",
 			"options": "readonly" // Optional: makes keys read-only in container
 		},
-	    "source=${localEnv:HOME}/.gemini,target=/home/vscode/.gemini,type=bind",
-	    	    		"source=/var/run/dbus,target=/var/run/dbus,type=bind",
+		"source=${localEnv:HOME}/.gemini,target=/home/vscode/.gemini,type=bind",
+		"source=/var/run/dbus,target=/var/run/dbus,type=bind",
 		"source=/run/user,target=/run/user,type=bind"
 	]
 }
